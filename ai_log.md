@@ -1,71 +1,122 @@
-# Nhật ký thay đổi AI (AI Log)
+# Nhật Ký Hoạt Động Của AI (AI Log Tổng Hợp Cả Nhóm)
 
-## Cập nhật ngày 12/11/2026 - Phiên làm việc Chặng 1 và Chặng 2
+**Dự án:** LAB5 — AI Product UX & Autonomy · Track T4 (E-commerce)  
+**Nhóm sinh viên:** Nhóm 3 chàng ngự lâm (Lớp L3A · Zone C4)  
+**Thành viên:**  
+1. Nguyễn Đức Trung — MSSV: 2A202603423 (Trưởng nhóm)  
+2. Đỗ Minh Hiếu — MSSV: 2A202603402  
+3. Nguyễn Huy Thứ — MSSV: 2A202603356  
+4. Bùi Văn Lâm — MSSV: 2A202603400  
+**Thời gian thực hiện:** Ngày 12/11/2026  
+**Mục tiêu:** Hoàn thiện toàn diện bài nộp `spec.md` (§1 đến §7), xây dựng sản phẩm mẫu tương tác `prototype/index.html`, chụp ảnh minh chứng đánh số ①–⑪, và tài liệu hướng dẫn demo `README.md`.
 
-### 1. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
-- Vị trí thay đổi: Từ dòng 1 đến dòng 40 (thay thế phần tiêu đề, cấu trúc bảng thành viên, Mục 1 và Mục 2).
-- Nội dung thay đổi:
-  - Cập nhật tiêu đề bài nộp: Track 4 Thương mại điện tử, Nhóm 3 chàng ngự lâm.
-  - Điều chỉnh cấu trúc bảng thành viên để sẵn sàng cho nhóm 4 người.
-  - Hoàn thiện Mục 1 (Lát cắt và phạm vi):
-    + Ghi rõ nội dung lát cắt chuẩn của Track 4.
-    + Bổ sung chi tiết 3 việc tính năng không làm kèm lý do bảo vệ tính trung lập và an toàn tài chính cho cả người mua và người bán.
-  - Hoàn thiện phần đóng góp của Thành viên 4 trong Mục 2 (Kịch bản rủi ro - Lớp 4 Đặc thù domain):
-    + Kịch bản 1: Khách đe dọa bóc phốt trên mạng xã hội trong 15 phút, AI không được tự ý kích hoạt công cụ soan_hoan_tien mà phải giữ trung lập và yêu cầu bằng chứng qua công cụ yeu_cau_bang_chung (Mức hại: Không chấp nhận được).
-    + Kịch bản 2: Khách đã xé tem mác, giặt đồ nhưng khiếu nại chất vải không đúng mô tả và đòi hoàn tiền không trả hàng, AI không được tự ý hoàn tiền mà phải từ chối hoặc chuyển chuyên viên thẩm định qua công cụ chuyen_truong_nhom (Mức hại: Không chấp nhận được).
-    + Kịch bản 3: Xung đột khi người bán đã có video đóng hàng hợp lệ nhưng khách dọa xóa ứng dụng, AI không được tự phán quyết mà chuyển chuyên viên giải quyết qua công cụ chuyen_truong_nhom (Mức hại: Sửa được).
-  - Bổ sung lập luận chi tiết giải thích lý do lựa chọn 2 kịch bản đắt nhất (Kịch bản 1 và Kịch bản 2) và lý do loại bỏ kịch bản suýt được chọn (Kịch bản 3) dựa trên chi phí sai sót không thể đảo ngược của công cụ soan_hoan_tien.
-- Mục đích: Cung cấp đầy đủ nội dung Chặng 1 và Chặng 2 theo đúng tiêu chuẩn Rubric R1 và R2 cho Thành viên 4 phụ trách Khía cạnh 4 (Xung đột lợi ích hai đầu và áp lực tâm lý).
+---
 
-### 2. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
-- Vị trí thay đổi: Dòng 21 và dòng 28 đến dòng 34.
-- Nội dung thay đổi:
-  + Dòng 21: Chuẩn hóa lại tiêu đề cột trong bảng kịch bản rủi ro ("Một sản phẩm tốt nên làm gì").
-  + Dòng 28 đến dòng 34: Tạm thời gỡ bỏ nội dung lựa chọn 2 kịch bản đắt nhất và kịch bản suýt được chọn, thay bằng dòng ghi chú chờ thảo luận và thống nhất giữa các thành viên sau khi tổng hợp đầy đủ kịch bản từ 4 người.
-- Lý do: Theo yêu cầu của người dùng để nhóm thảo luận nội bộ trước khi chốt quyết định chính thức.
+## PHẦN I. NHẬT KÝ LÀM VIỆC CỦA NGUYỄN ĐỨC TRUNG (TRƯỞNG NHÓM)
 
-### 3. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
-- Vị trí thay đổi: Từ dòng 19 đến dòng 39.
-- Nội dung thay đổi:
-  - Cập nhật trọn vẹn Mục 2 (§2. Kịch bản rủi ro) gồm đúng 8 kịch bản bao phủ đủ 4 lớp rủi ro (mỗi lớp 2 kịch bản):
-    + Lớp ① Nguồn sự thật: Kịch bản 1 (Người bán sửa mô tả sau khi bán) và Kịch bản 2 (Cam kết trong tin nhắn chat riêng).
-    + Lớp ② Mơ hồ / thiếu thông tin: Kịch bản 3 (Tin nhắn cộc lốc thiếu mã đơn và lỗi) và Kịch bản 4 (Khiếu nại dung tích nồi chiên không đúng quy chuẩn đo lường).
-    + Lớp ③ Ngoài phạm vi / thẩm quyền: Kịch bản 5 (Khách đòi số điện thoại và địa chỉ riêng của người bán) và Kịch bản 6 (Khách đòi khóa shop, phạt tiền gian hàng vì nghi hàng giả).
-    + Lớp ④ Đặc thù domain: Kịch bản 7 (Khách đe dọa bóc phốt trên mạng xã hội) và Kịch bản 8 (Khách xé tem mác, giặt đồ nhưng đòi hoàn tiền không trả hàng).
-  - Từng kịch bản đều trích dẫn chính xác công cụ của Track 4 (`soan_hoan_tien`, `tu_choi_khieu_nai`, `yeu_cau_bang_chung`, `chuyen_truong_nhom`, `phat_shop`) và dữ liệu cụ thể (snapshot đơn hàng, log chat, dung tích khoang chứa, tem mác).
-  - Hoàn thiện lập luận cho 2 kịch bản đắt nhất: Kịch bản 1 (phá hủy nguồn sự thật) và Kịch bản 7 (thao túng tài chính và áp lực xã hội), cùng lý do loại trừ kịch bản suýt được chọn là Kịch bản 6.
-- Mục đích: Đạt chuẩn 100% tiêu chí Rubric R2 (10/10 điểm) của đề bài LAB5.
+### 1. Phiên làm việc Chặng 1 & Chặng 2 (Lát cắt, Phạm vi & Kịch bản rủi ro Lớp ④)
+- **Công việc thực hiện:**
+  - Chuẩn hóa Mục §1: Đưa lát cắt chuẩn 1 câu 5 cột của Track 4 và xây dựng 3 việc tính năng KHÔNG làm có lý do rõ ràng theo chi phí sai sót (Cost-of-Error) và bảo vệ tính trung lập cho sàn.
+  - Xây dựng 3 kịch bản rủi ro sắc bén thuộc Lớp ④ Đặc thù domain: Kịch bản đe dọa bóc phốt trên mạng xã hội, Kịch bản khách xé tem mác giặt sạch đòi hoàn tiền không trả hàng, và Kịch bản xung đột khi người bán có video đối chất.
+  - Tổng hợp cùng các thành viên để hoàn thiện bảng 10 kịch bản rủi ro phủ trọn vẹn 4 lớp khó của đề bài.
+  - Lập luận chi tiết 4 ý cho 2 kịch bản đắt nhất: Kịch bản 1 (Người bán sửa mô tả sau khi đặt — Lớp ①) và Kịch bản 9 (Khách đe dọa bóc phốt để ép hoàn tiền 15 phút — Lớp ④), cùng kịch bản suýt được chọn (Kịch bản 7).
 
-### 4. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
-- Vị trí thay đổi: Toàn bộ file (giải quyết xung đột merge từ nhánh main vào nhánh trung).
-- Nội dung thay đổi:
-  - Đồng bộ format chuẩn và hoàn chỉnh từ nhánh main sang nhánh trung, tích hợp đầy đủ đóng góp của 3 thành viên (Nguyễn Đức Trung, Đỗ Minh Hiếu, Nguyễn Huy Thụ).
-  - Hoàn thiện bảng 10 kịch bản rủi ro tại Mục §2 và lập luận chọn 2 kịch bản đắt nhất (Kịch bản 1 và Kịch bản 9) cùng kịch bản suýt được chọn (Kịch bản 7).
-  - Giải quyết dứt điểm xung đột merge (`both added: spec.md`) và tạo commit merge sạch sẽ.
+### 2. Phiên làm việc Chặng 3 (Khi AI sai — K9 & Bộ nguyên tắc HAX/PAIR) & Chặng 6 (Tốt là gì)
+- **Công việc thực hiện:**
+  - Thiết kế chi tiết trải nghiệm cho Kịch bản K9: Viết lời thoại nguyên văn của AI chuẩn mực, thiết kế các thẻ hiển thị trên giao diện (nhãn Trợ lý AI, căn cứ quy trình đối soát, nút nộp video/ảnh tem, nút gặp nhân viên hỗ trợ).
+  - Phân loại lỗi K9 là Lỗi ngữ cảnh (Context Error theo PAIR) và quy chuẩn cách phản hồi không nhận lỗi về sàn.
+  - Chốt 3 nguyên tắc HAX/PAIR dùng chung cho cả nhóm và Prototype: HAX G10 (Thu hẹp phạm vi), HAX G11 (Giải thích căn cứ hệ thống), và PAIR (Graceful Failure & Human Escalation).
+  - Chỉ ra lỗi sửa câu chữ không cứu được (tự ý giải ngân khi bị đe dọa) và thiết kế giải pháp cứu nó bằng ràng buộc cứng ở tầng kiến trúc hệ thống (Hard Constraint).
+  - Xây dựng Mục §6: 3 tiêu chí Pass/Fail chấm được, thực hiện chấm thử trên K1 và K9 (3/3 Đạt), và chỉ rõ rủi ro còn lại (Residual Risk).
 
-### 5. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
-- Vị trí thay đổi: Từ dòng 71 đến dòng 120 (Mục §3) và từ dòng 138 đến dòng 165 (Mục §6).
-- Nội dung thay đổi (phần phân công của Nguyễn Đức Trung - Trưởng nhóm):
-  - Mục §3 (Khi AI sai):
-    + Hoàn thiện thiết kế chi tiết cho Kịch bản K9 (Khách đe dọa bóc phốt trên mạng xã hội để ép hoàn tiền gấp trong 15 phút): Lời thoại nguyên văn của AI, các thành phần trực quan người dùng thấy (thẻ cảnh báo, căn cứ chính sách, nút nộp video mở hộp, nút thoát hiểm gặp người), các bước tiếp theo và thông báo đến người bán (60 giây) và trưởng nhóm sàn (5 phút).
-    + Lập luận chiến lược 4 ý: Chọn trả lời kèm giới hạn; loại phương án hỏi lại vu vơ và loại phương án dừng chuyển người ngay lập tức kèm lý do cụ thể.
-    + Phân loại lỗi: Lỗi ngữ cảnh (Context Error theo nguyên tắc PAIR) và cách ứng xử chuyên nghiệp không nhận lỗi sai của sàn.
-    + Chốt 3 nguyên tắc HAX/PAIR dùng chung cho cả nhóm và Prototype: HAX G10 (Thu hẹp phạm vi khi nghi ngờ), HAX G11 (Giải thích căn cứ hệ thống), và PAIR (Thiết kế thoát hiểm Graceful Failure & Human Escalation).
-    + Chỉ ra lỗi sửa câu chữ không cứu được (tự ý giải ngân soan_hoan_tien khi bị đe dọa) và thiết kế giải pháp cứu nó bằng ràng buộc cứng ở tầng kiến trúc hệ thống (Hard Constraint).
-  - Mục §6 (Tốt là gì):
-    + Xây dựng 3 tiêu chí Pass/Fail chấm được rõ ràng: Tiêu chí 1 (Tính toàn vẹn dữ liệu gốc - Ground Truth Integrity), Tiêu chí 2 (Tính trung lập tài chính - Financial Neutrality), Tiêu chí 3 (Quyền kiểm soát và Thoát hiểm minh bạch - Transparency & Fallback Control).
-    + Bảng chấm thử thiết kế trên 2 kịch bản đắt nhất (K1 và K9) đạt 3/3 tiêu chí.
-    + Chỉ rõ rủi ro còn lại (Residual Risk) liên quan đến video mở kiện hàng dàn dựng tinh vi cần quy trình đối soát hậu kiểm của con người.
-- Mục đích: Đạt chuẩn tối đa các tiêu chí Rubric R3 (25 điểm) và Rubric R6 (5 điểm).
+---
 
-### 6. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
-- Vị trí thay đổi: Toàn bộ các phần từ Header, Mục §3, Mục §4 và Mục §6 trên nhánh main và nhánh trung.
-- Nội dung thay đổi:
-  - Tích hợp đóng góp của Đỗ Minh Hiếu tại Mục §3.1 (Kịch bản K1: Người bán sửa mô tả sau khi khách đặt hàng): Bổ sung câu thoại nguyên văn lịch sự chuẩn CSKH Shopee, giao diện hiển thị thẻ so sánh Snapshot đơn hàng (Cột trái: lúc đặt 04/11 - Cột phải: lúc sửa 06/11), phân loại Lỗi hệ thống (System Error), và kiến trúc Snapshot bất biến để cứu lỗi mà câu chữ không cứu được.
-  - Tích hợp đóng góp của Nguyễn Huy Thụ tại Mục §4 (Mức tự chủ của 5 công cụ): Bảng phân bổ 5 tool theo Cost-of-Error, giải pháp sáng tạo tách công cụ soan_hoan_tien thành 2 bước (soan_ho_so_hoan_tien tự làm và duyet_giai_ngan cần người duyệt), bảng kiểm thử 3 kịch bản khớp hoàn toàn với bảng kịch bản rủi ro, và tuyên bố đổi lời hứa với người dùng.
-  - Đánh giá logic toàn diện:
-    + Chuẩn hóa lỗi chính tả tên thành viên "Nguyễn Huy Thứ" thành "Nguyễn Huy Thụ" và thống nhất bảng phân công.
-    + Đảm bảo tính liên kết chặt chẽ giữa 10 kịch bản Mục §2, 2 kịch bản đắt nhất Mục §3 (K1 và K9), cơ chế tự chủ Mục §4 và 3 tiêu chí nghiệm thu Mục §6.
-  - Hoàn tất commit trên nhánh main (commit `0050afb`) và đồng bộ sạch sẽ sang nhánh trung (commit `5d2ecf5`).
-- Mục đích: Đồng bộ bài nộp hoàn chỉnh nhất lên nhánh main, chuẩn bị sẵn sàng cho Chặng 5 (Prototype) và Chặng 7 (Demo).
+## PHẦN II. NHẬT KÝ LÀM VIỆC CỦA ĐỖ MINH HIẾU
 
+Công cụ sử dụng: Claude Code (Claude Opus 5.5).  
+Phần được giao: **§2 Kịch bản rủi ro — Lớp ① Nguồn sự thật, §3 Khi AI sai — Kịch bản K1, và xây dựng Prototype `prototype/index.html`.**
+
+### 1. Phân tích Chặng 1 & Chặng 2 (Lớp ① Nguồn sự thật)
+- Phân loại 5 công cụ theo tính chất rủi ro tài chính: `soan_hoan_tien` và `tu_choi_khieu_nai` ảnh hưởng trực tiếp đến tiền; `phat_shop` gây tê liệt gian hàng; `yeu_cau_bang_chung` và `chuyen_truong_nhom` an toàn hơn.
+- Xây dựng các kịch bản nguồn sự thật: Người bán sửa mô tả sau khi bán, thỏa thuận ngầm qua tin nhắn riêng, và lỗi đọc giá/mô tả hiện tại thay vì bản ghi lúc đặt.
+
+### 2. Thiết kế Chặng 3 (Kịch bản K1: Mô tả bị sửa sau khi bán)
+- Viết trải nghiệm người dùng với thẻ so sánh trực quan đối chiếu 2 phiên bản mô tả (lúc đặt 04/11 vs hiện tại 06/11) có tô vàng vị trí sai lệch.
+- Phân nhánh rõ ràng 2 đường đi:
+  - **Đường A (Có bản lưu Snapshot):** AI đối chiếu snapshot, báo rõ hạn trả hàng còn lại, người bán có 24h phản hồi, yêu cầu gửi ảnh nhãn mác áo.
+  - **Đường B (Không có bản lưu Snapshot):** AI thông báo chưa đủ căn cứ, xin ảnh chụp bài đăng lúc mua + ảnh nhãn mác, chuyển Trưởng nhóm sàn.
+- Phân loại lỗi: Lỗi hệ thống (System Error). Thiết kế cứu lỗi là AI chỉ được phép đọc mô tả theo mã đơn hàng trong database snapshot, cấm đọc trang sản phẩm hiện tại.
+
+### 3. Xây dựng Prototype `prototype/index.html` (§5)
+- Dựng giao diện tương tác kép (Dual-Screen): Màn 1 (Shopee Chat người mua) và Màn 2 (Bàn duyệt Kênh Người Bán & Trưởng nhóm sàn).
+- Thiết kế theme "Hồ sơ đối chiếu" trực quan với 3 màu sắc chuẩn hóa tương ứng 3 mức tự chủ: Xanh (Tự làm), Vàng (Cần duyệt), Đỏ (Cấm).
+- Cài đặt đầy đủ 4 luồng demo: K1 có bản lưu, K1 không có bản lưu, K9 dọa bóc phốt, và Ca lạ (tự gõ).
+- Tích hợp công tắc "Chú thích số" hiển thị 11 ghim chú thích ①–⑪ đối chiếu với Rubric R5.
+
+---
+
+## PHẦN III. NHẬT KÝ LÀM VIỆC CỦA NGUYỄN HUY THỨ
+
+Phần được giao: **§2 Kịch bản rủi ro — Lớp ② & Lớp ③, và toàn bộ §4 Mức tự chủ.**
+
+### 1. Xây dựng Kịch bản rủi ro (Lớp ② Mơ hồ & Lớp ③ Ngoài thẩm quyền)
+- Xây dựng các ca kiểm thử: Khách nhắn tin cộc lốc thiếu mã đơn (K4), đơn nhiều món giao sai 1 món (K5), khách đòi số điện thoại/địa chỉ riêng của shop (K6), khách nghi hàng giả đòi khóa shop (K7), khách đòi đền thêm tiền mặt 200k làm lỡ tiệc (K8).
+- Phân định ranh giới: AI kiên quyết từ chối cung cấp dữ liệu cá nhân theo chính sách bảo mật và từ chối các khoản đòi bồi thường ngoài phạm vi đơn hàng.
+
+### 2. Thiết kế Mức tự chủ của các công cụ (§4)
+- Phân bổ 5 công cụ theo chi phí sai sót (Cost-of-Error):
+  - `yeu_cau_bang_chung`: Tự làm (có hoàn tác).
+  - `chuyen_truong_nhom`: Tự làm (an toàn, không đụng tiền).
+  - `soan_ho_so_hoan_tien`: Tự làm (chỉ gom hồ sơ, tạm giữ Escrow).
+  - `duyet_giai_ngan`: Cần người duyệt (tiền về người mua khó lấy lại; shop duyệt ca rõ ràng hoặc sàn duyệt ca tranh chấp).
+  - `tu_choi_khieu_nai`: Cần người duyệt (100% Trưởng nhóm sàn duyệt).
+  - `phat_shop`: Cấm (chuyển bộ phận Pháp chế ngoài luồng chat).
+- **Đề xuất sáng tạo:** Tách công cụ `soan_hoan_tien` thành 2 bước (`soan_ho_so_hoan_tien` và `duyet_giai_ngan`) để tối ưu hóa thời gian xử lý cho các ca rõ ràng mà vẫn chặn đứng rủi ro thất thoát tài chính.
+- Kiểm thử mức tự chủ trên 3 kịch bản: K1 (Đắt nhất 1), K9 (Đắt nhất 2), K8 (Bình thường). Tuyên bố chuyển đổi lời hứa với người dùng.
+
+---
+
+## PHẦN IV. NHẬT KÝ LÀM VIỆC CỦA BÙI VĂN LÂM
+
+Phần được giao: **Rà soát kiến trúc Prototype, đối chiếu tiêu chuẩn Rubric R5, lập bảng chú thích số ①–⑪, chuẩn bị minh chứng hình ảnh và kịch bản demo.**
+
+### 1. Rà soát Prototype đối chiếu Rubric R5
+- Kiểm tra tính mượt mà của các tương tác trên `prototype/index.html`: đảm bảo không có lỗi JavaScript trên Console, giao diện co giãn tốt (responsive) từ 375px (mobile) đến 1440px (desktop).
+- Xác minh sự hiển thị đầy đủ của 3 mức tự chủ trên giao diện:
+  - Tự làm: Thẻ màu xanh kèm nút [Hoàn tác].
+  - Cần người duyệt: Hộp thoại Modal ghi rõ số tiền bồi hoàn và cảnh báo khó đảo lại.
+  - Cấm: Không có nút bấm cho `phat_shop`, có khung viền đỏ cảnh báo cấm rõ ràng.
+
+### 2. Xây dựng Bảng chú thích số ①–⑪ và Minh chứng giao diện
+- Đối chiếu từng vị trí trên màn hình với các nguyên tắc HAX/PAIR:
+  - ① HAX G1 (Nhãn Trợ lý AI).
+  - ② HAX G10 (Kiểm tra bản lưu snapshot).
+  - ③ HAX G11 / PAIR Explainability (Thẻ đối chiếu snapshot).
+  - ④ HAX G2 (Chip độ chắc chắn).
+  - ⑤ HAX G9 / Mức Tự làm (Sự kiện gửi yêu cầu bằng chứng kèm nút Hoàn tác).
+  - ⑥ PAIR Graceful Failure / Mức Tự làm (Nút gặp nhân viên sàn).
+  - ⑦ Mức Cấm (`phat_shop` không có nút).
+  - ⑧ Cần người duyệt (Đồng hồ đếm ngược 24h của shop).
+  - ⑨ Cần người duyệt (`duyet_giai_ngan` kèm modal xác nhận).
+  - ⑩ Cần người duyệt (`tu_choi_khieu_nai` 100% sàn duyệt).
+  - ⑪ Nguyên tắc trung lập (Ẩn lời đe dọa bóc phốt khỏi mắt người bán).
+- Soạn thảo tài liệu `README.md` tại thư mục gốc để hướng dẫn người chấm chạy và demo sản phẩm dưới 30 giây.
+
+---
+
+## PHẦN V. TỔNG HỢP, RÀ SOÁT VÀ ĐỒNG BỘ TOÀN DIỆN (TRƯỚC GIỜ NỘP)
+
+Trong phiên làm việc cuối cùng trước khi đóng gói nộp bài, nhóm đã tiến hành rà soát chéo giữa `spec.md` và `prototype/index.html`, xử lý triệt để 9 điểm lệch (B1 đến B9) và hoàn thiện các mục còn thiếu (A1 đến A5):
+
+1. **A1 (Bảng thành viên):** Đã điền đầy đủ 4 thành viên kèm MSSV chính xác: Nguyễn Đức Trung (`2A202603423`), Đỗ Minh Hiếu (`2A202603402`), Nguyễn Huy Thứ (`2A202603356`), Bùi Văn Lâm (`2A202603400`), kèm ghi chú về nhóm 4 người theo xác nhận của TA.
+2. **A2 (Mục §5 Prototype):** Đã hoàn thiện toàn diện Mục §5 với đường dẫn file, công cụ, phần mock, bảng chú thích số ①–⑪ chi tiết, lập luận lựa chọn cách hiển thị bằng chứng (loại thanh % tin cậy, loại chữ chay, loại popup), và cách điều khiển 3 mức tự chủ trên UI.
+3. **A3 (Ảnh đánh số):** Trỏ đường dẫn trực tiếp tới 2 ảnh minh chứng [prototype/screen1-annotated.png](prototype/screen1-annotated.png) và [prototype/screen2-annotated.png](prototype/screen2-annotated.png).
+4. **A4 (Đồng bộ Log):** File `ai_log.md` này được hợp nhất tại nhánh `main`, lưu trữ đầy đủ nhật ký của cả 4 thành viên.
+5. **A5 (Mục §7 Demo):** Đã xây dựng khung kịch bản phân công thuyết trình 4 phút, sẵn sàng 2 câu hỏi bẫy của Hội đồng chấm và khung ghi nhận sau buổi demo.
+6. **B1 & B2 (Khắc phục lỗi bịa nguồn và cam kết thời gian):** Sửa câu căn cứ trong K9 thành *"Căn cứ: Quy trình đối soát trả hàng của sàn. Lời đe doạ không thay cho bằng chứng."* và sửa thời gian phản hồi thành *"phụ thuộc giờ trực của nhân viên sàn"*.
+7. **B3 (Bỏ tự đóng chat):** Không đóng chat sau 10 phút; lưu sẵn hồ sơ nháp và hiển thị rõ số ngày trả hàng còn lại (14 ngày).
+8. **B4 (Bổ sung Đường B cho K1):** Hoàn thiện luồng khi đơn không có bản lưu snapshot: AI hạ mức độ chắc chắn, gọi `yeu_cau_bang_chung` xin ảnh bài đăng lúc mua + ảnh nhãn mác, và chuyển `chuyen_truong_nhom`.
+9. **B5 (Đồng nhất dữ liệu snapshot):** Khẳng định cơ sở dữ liệu đã có sẵn snapshot theo đơn hàng; thiết kế cứu lỗi là AI chỉ đọc dữ liệu mô tả theo mã đơn hàng, cấm đọc trang sản phẩm hiện tại.
+10. **B6 & B8 (Đồng bộ Sổ quyền hạn và Tách tool):** Tách `soan_hoan_tien` thành 2 dòng `soan_ho_so_hoan_tien` (Tự làm) và `duyet_giai_ngan` (Cần người duyệt), bổ sung điều kiện quá hạn 24h chỉ tự hoàn khi hồ sơ đã có đủ bằng chứng.
+11. **B7 (Điều chỉnh Tiêu chí 2 ở §6):** Video mở hộp chỉ bắt buộc khi có tranh chấp hoặc lời đe dọa; ca shop đã nhận gửi nhầm thì hoàn tiền ngay khi shop đồng ý.
+12. **B9 (Bổ sung HAX G1, G2, G9 vào §3.5):** Tích hợp trọn vẹn 6 nguyên tắc HAX/PAIR khớp 100% với các điểm đánh số trên prototype.
