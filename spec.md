@@ -71,10 +71,20 @@ Trong Trò chuyện với Shopee, khi người mua đang báo "hàng nhận khô
 ## §3. Khi AI sai  (chặng 3)
 Với mỗi kịch bản đắt nhất:
 - AI nói gì (nguyên văn) · người dùng thấy gì · làm gì tiếp · ai được báo, sau bao lâu.
+      + AI nói: Đơn của bạn đặt ngày 4/11 là áo len lông cừu 100%, hiện tại ngày 6/11 là áo sợi tổng hợp.  
+      + Người dùng thấy: card với mô tả hàng cũ đặt cạnh card với mô tả hàng mới có đánh dấu vị trí đổi thông tin, nhãn "căn cứ: dữ liệu hàng hóa cũ và mới"
+      + Làm gì tiếp: nút [Gửi yêu cầu trả hàng, hoàn tiền], [Chat với nhân viên]. Nếu người mua không bấm gì, chờ 10 phút và follow-up: "Chat sẽ mở thêm 10 phút để bạn gửi yêu cầu. Nếu bạn không có yêu cầu gì khác, chat này sẽ được đóng lại." 
+      + Ai được báo: người bán (nếu người bán cũng là người cskh), nhân viên sàn tmđt (khi người bán khiếu nại, có thể do không biết mô tả bị đổi khi nào), sau 5-10 phút phải có AI hoặc người giải quyết (xác định lỗi ở shop hay ở sàn, phương hướng giải quyết)
+      
 - Quyết định: hỏi lại / trả lời kèm giới hạn / dừng và chuyển người — chọn cách nào, đã loại cách nào, vì sao.
+   + Quyết định trả lời kèm giới hạn. Không cần hỏi lại vì đã đủ dữ liệu. Dừng để chuyển người không cần thiết vì mất thời gian của khách.
+
 - Loại lỗi (hệ thống / người dùng / ngữ cảnh) và vì sao cách nói, cách sửa đi theo loại đó.
+   + Lỗi hệ thống: hệ thống có sao lưu snapshot dữ liệu hệ thống nhưng AI chỉ đọc theo dữ liệu mới nhất. 
+   
 - 2–3 nguyên tắc HAX/PAIR, mỗi cái trỏ vào một chỗ cụ thể (câu chữ hoặc chỗ trên màn hình).
 - Lỗi nào sửa câu chữ không cứu được (nếu có), và thiết kế cứu nó thế nào.
+   + Suggest: thiết kế database lưu dữ liệu hàng hóa theo thời gian. 
 
 ## §4. Mức tự chủ  (chặng 4)
 Với mỗi tool:

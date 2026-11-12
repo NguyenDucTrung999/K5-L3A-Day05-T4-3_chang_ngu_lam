@@ -39,3 +39,31 @@ Phần được giao: **§2 Kịch bản rủi ro — lớp ① Nguồn sự th�
 - Chuyển `spec.md` từ thư mục đề sang repo nhóm, push lên `main` (commit `ee7d56d`).
 - Xoá file rỗng `spec.md ` (tên có dấu cách ở cuối, Windows không checkout được).
 - Log này push lên branch `dominhhieu` để leader merge.
+
+## Cập nhật 12/11/2026 — §3 Khi AI sai, kịch bản K1 (mô tả bị sửa sau khi bán)
+
+### 4. File thay đổi: `spec.md` §3 (phần K1)
+- **Vị trí:** dưới heading `## §3`, 4 gạch đầu dòng đầu và gạch cuối.
+- **Nội dung mình viết:**
+  - AI nói: nêu 2 phiên bản mô tả kèm ngày (4/11 lông cừu 100% · 6/11 sợi tổng hợp), không kết luận shop cố ý.
+  - Người dùng thấy: thẻ mô tả lúc đặt hàng đặt cạnh thẻ mô tả hiện tại, đánh dấu chỗ khác nhau, nhãn căn cứ.
+  - Làm gì tiếp: nút [Gửi yêu cầu trả hàng, hoàn tiền] (người mua bấm, AI không tự hoàn tiền) · [Chat với nhân viên]. Có đường đi khi người mua không bấm gì.
+  - Ai được báo: người bán · nhân viên sàn khi người bán phản đối.
+  - Quyết định: trả lời kèm giới hạn. Loại "hỏi lại" vì dữ liệu đã đủ. Loại "chuyển người ngay" vì người mua phải chờ.
+  - Loại lỗi: lỗi hệ thống, vì có snapshot nhưng AI lại đọc bản mới nhất.
+- **AI hỗ trợ:** review 2 lượt, chỉ ra lỗi, gợi ý bằng ví dụ app giao đồ ăn (ngoài đề). Câu chữ trong spec do mình viết.
+- **Đã sửa sau review lượt 1:**
+  - Bỏ câu kết tội "shop mới đổi chủng loại".
+  - Làm rõ thẻ so sánh.
+  - Đổi nút thành "gửi yêu cầu".
+  - Gỡ mâu thuẫn "không có snapshot".
+
+### 5. Còn thiếu ở §3 K1 (bổ sung sau)
+- [ ] **Đường B:** khi đơn không có bản mô tả lúc đặt → AI nói "chưa đủ căn cứ" → `yeu_cau_bang_chung` + `chuyen_truong_nhom`. Thêm câu kiểm "đơn có bản lưu lúc đặt không?" phía trên câu AI nói.
+- [ ] **Lỗi câu chữ không cứu được:** thay "Suggest: database…" (mâu thuẫn với "đã có snapshot") bằng thiết kế: AI chỉ đọc mô tả **theo mã đơn**, không đọc trang sản phẩm hiện tại.
+- [ ] **Câu AI nói** bổ sung: báo đây là trợ lý AI · còn bao nhiêu ngày được trả hàng · người bán sẽ được phản hồi trong hạn.
+- [ ] **Ai được báo:** người bán **luôn** được báo, kèm hạn phản hồi (ví dụ 48h). Nhân viên sàn quyết khi người bán phản đối; AI không tự xác định lỗi ở bên nào.
+- [ ] **Người mua không bấm gì:** lưu sẵn yêu cầu nháp + nhắc hạn trả hàng, thay cho việc đóng chat sau 10 phút.
+- [ ] **Loại lỗi:** thêm vì sao cách nói và cách sửa đi theo lỗi hệ thống (AI xin lỗi thay hệ thống, không bắt người mua tự chứng minh).
+- [ ] **Quyết định:** lý do loại "chuyển người" ghi rõ ai mất gì, mất bao lâu.
+- [ ] **HAX/PAIR:** chờ Trung chốt; dự kiến G11 = thẻ so sánh, G2 = câu ở Đường B.
