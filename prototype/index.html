@@ -139,6 +139,22 @@ main{max-width:1280px;margin:0 auto;padding:16px}
 .cmp .h{display:block;font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
 .cmp mark{background:var(--mark);color:inherit;padding:0 2px;border-radius:2px}
 .cmp .edited{color:var(--forbid);font:600 .68rem var(--f-mono)}
+.cmp .void{background:repeating-linear-gradient(135deg,var(--sheet-2) 0 7px,var(--sheet) 7px 14px);color:var(--ink-2)}
+.cmp .void b{display:block;color:var(--forbid);font:600 .74rem var(--f-mono)}
+.cmp .ref{color:var(--ink-3)}
+/* verdict strip: the first thing the user reads in an AI answer — did the AI manage to compare or not */
+.verdict{display:flex;gap:8px;align-items:center;padding:7px 10px;margin:0 0 10px;border-radius:var(--r);font:600 .74rem var(--f-mono);letter-spacing:.05em;text-transform:uppercase}
+.verdict.ok{background:var(--auto-bg);color:var(--auto);border:1px solid var(--auto)}
+.verdict.no{background:var(--forbid-bg);color:var(--forbid);border:1px solid var(--forbid)}
+.msg.ai.ok{border-color:var(--auto);border-left-width:4px}
+.msg.ai.no{border-color:var(--forbid);border-left-width:4px}
+/* basis checklist: which grounds the case has, and which are missing */
+.basis{list-style:none;margin:6px 0 8px;padding:0;font-size:.84rem;display:grid;gap:4px}
+.basis li{display:grid;grid-template-columns:20px 1fr;gap:6px;align-items:start}
+.basis .y{color:var(--auto);font-weight:700}
+.basis .n{color:var(--forbid);font-weight:700}
+.basis .w{color:var(--ink-3);font-weight:700}
+.basis .lbl{min-width:0}
 .src{display:flex;gap:6px;align-items:center;font-size:.78rem;color:var(--ink-2);margin:4px 0 8px}
 .conf{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
 .pill{display:inline-flex;align-items:center;gap:6px;font:600 .72rem var(--f-mono);letter-spacing:.03em;padding:3px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
@@ -375,14 +391,14 @@ const SCEN = {
 const LEGEND1 = [
   ['Nhãn "Trợ lý AI" trên đầu chat và trên mỗi câu AI nói', 'G1 · cho người dùng biết đang nói với AI (Luật AI 134/2025, Điều 11)'],
   ['Dòng kiểm "Đơn có bản lưu mô tả lúc đặt?" trước khi AI kết luận', 'G10 · thu hẹp phạm vi khi chưa chắc · thiết kế cứu lỗi K1: chỉ đọc mô tả theo mã đơn'],
-  ['Thẻ đối chiếu: mô tả lúc đặt cạnh mô tả hiện tại, tô vàng chỗ khác', 'G11 · giải thích vì sao · PAIR Explainability: căn cứ để người dùng tự kiểm'],
-  ['Chip độ chắc: chắc về MÔ TẢ, chưa xác minh hàng thực tế', 'G2 · nói rõ AI biết tới đâu'],
+  ['Thẻ đối chiếu: mô tả lúc đặt cạnh mô tả hiện tại, tô vàng chỗ khác. Đơn thiếu bản lưu: ô "lúc đặt" vẫn hiện nhưng gạch chéo, ghi KHÔNG CÓ BẢN LƯU', 'G11 · giải thích vì sao · PAIR Explainability: căn cứ (và chỗ thiếu căn cứ) để người dùng tự kiểm'],
+  ['Dải trạng thái "Đã / Chưa đối chiếu được" + chip độ chắc + danh sách căn cứ ✓/✗', 'G2 · nói rõ AI biết tới đâu · nhánh thiếu căn cứ thì AI làm ít hơn (không soạn hồ sơ hoàn tiền)'],
   ['Sự kiện "đã gửi yêu cầu bằng chứng" + nút Hoàn tác', 'Mức Tự làm (có hoàn tác) · G9 sửa dễ'],
   ['Nút "Gặp nhân viên sàn" luôn có, không đưa cho shop', 'PAIR Graceful failure · chuyen_truong_nhom (Tự làm)'],
   ['Sổ quyền hạn: phat_shop ở mức Cấm, không có nút ở bất kỳ màn nào', 'Mức Cấm']
 ];
 const LEGEND2 = [
-  ['Hạn phản hồi 24h của người bán và luật khi quá hạn', 'Cần duyệt · có quá hạn rõ ràng (spec §4)'],
+  ['Hạn phản hồi 24h của người bán và luật khi quá hạn: có bản lưu thì sàn hoàn theo hồ sơ; thiếu bản lưu thì trưởng nhóm quyết, không tự hoàn', 'Cần duyệt · có quá hạn rõ ràng (spec §4)'],
   ['Nút "Đồng ý hoàn tiền" mở hộp xác nhận ghi rõ số tiền và việc khó đảo', 'Cần duyệt · duyet_giai_ngan'],
   ['Trưởng nhóm sàn duyệt khi người bán phản đối; từ chối khiếu nại cũng phải xác nhận', 'Cần duyệt · tu_choi_khieu_nai (100% người duyệt)'],
   ['Lời doạ được ẩn khỏi bản người bán nhìn thấy', 'Trung lập: lời doạ không phải căn cứ']
@@ -394,7 +410,7 @@ const LEGEND2 = [
 let S;
 function fresh(scen){
   return { scen, step:0, tools:Object.fromEntries(TOOLS.map(t=>[t.k,'—'])), live:null,
-           notify:[], evidence:false, seller:null, lead:null, sellerNote:'' };
+           notify:[], evidence:false, ev:{label:false, page:false}, seller:null, lead:null, sellerNote:'' };
 }
 const $ = s => document.querySelector(s);
 const log = $('#log');
@@ -406,7 +422,19 @@ const icon = (id) => `<svg class="i" aria-hidden="true"><use href="#i-${id}"/></
 /* ---------- chat primitives ---------- */
 function add(html, cls){ const d=document.createElement('div'); d.className=cls; d.innerHTML=html; log.appendChild(d); log.scrollTop=log.scrollHeight; return d; }
 const me = t => add(esc(t), 'msg me');
-function ai(html, ann){ return add(`<div class="by"><span class="ai-tag"${ann?` data-ann="${ann}"`:''}>Trợ lý AI</span></div>${html}`, 'msg ai'); }
+function ai(html, ann, tone){ return add(`<div class="by"><span class="ai-tag"${ann?` data-ann="${ann}"`:''}>Trợ lý AI</span></div>${html}`, 'msg ai' + (tone?' '+tone:'')); }
+const verdict = ok => ok
+  ? `<div class="verdict ok">${icon('shield')} Đã đối chiếu được · có bản lưu lúc đặt</div>`
+  : `<div class="verdict no">${icon('ban')} Chưa đối chiếu được · thiếu bản lưu lúc đặt</div>`;
+/* the grounds a case has — shown in the chat and in the case file, so "missing" is visible, not silent */
+function basisHTML(){
+  const sc=SCEN[S.scen], row=(st,t)=>`<li><span class="${st}" aria-hidden="true">${st==='y'?'✓':st==='n'?'✗':'…'}</span><span class="lbl">${t}<span class="sr"> (${st==='y'?'có':st==='n'?'không có':'chưa có'})</span></span></li>`;
+  return `<ul class="basis">
+    ${row(sc.snapshot?'y':'n', 'Mô tả lúc đặt (bản lưu của sàn)')}
+    ${row(S.ev.label?'y':'w', 'Ảnh nhãn mác thực tế')}
+    ${sc.snapshot?'':row(S.ev.page?'y':'w', 'Ảnh bài đăng lúc mua (người mua gửi, nhân viên phải kiểm)')}
+  </ul>`;
+}
 async function typing(label){ const d=add(`<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>${esc(label)}`,'typing'); await wait(750); d.remove(); }
 function event(text, lv, opts={}){
   const d = add(`${icon(lv==='auto'?'shield':lv==='review'?'clock':'lock')}<span class="grow">${text}</span><span class="pill ${lv}">${LV[lv][0]}</span>`, 'event ' + (lv==='auto'?'':lv));
@@ -430,9 +458,10 @@ function renderCase(){
   $('#s1-sub').textContent = sc.label;
   $('#caseKv').innerHTML = `
     <dt>Đặt lúc</dt><dd class="mono">${ORDER.ordered}</dd>
-    <dt>Bản lưu mô tả</dt><dd>${sc.snapshot ? `<span class="pill auto">CÓ · bất biến</span>` : `<span class="pill forbid">KHÔNG CÓ</span>`}</dd>
+    <dt>Đối chiếu</dt><dd>${sc.snapshot ? `<span class="pill auto">được · có bản lưu</span>` : `<span class="pill forbid">không được · thiếu bản lưu</span>`}</dd>
+    <dt>Ai quyết</dt><dd>${sc.snapshot ? 'người bán duyệt; phản đối → trưởng nhóm sàn' : '<b>chỉ trưởng nhóm sàn</b>; AI không soạn hồ sơ hoàn tiền'}</dd>
     <dt>Hạn trả hàng</dt><dd>còn <b>${ORDER.daysLeft} ngày</b> <span class="mono">(dữ liệu dựng)</span></dd>
-    <dt>Bằng chứng</dt><dd>${S.evidence ? 'Ảnh nhãn mác: <b>đã nhận</b>' : '<span class="empty">chưa có</span>'}</dd>`;
+    <dt>Căn cứ</dt><dd>${basisHTML()}</dd>`;
 }
 function renderLedger(){
   $('#ledger').innerHTML = TOOLS.map(t=>`<tr class="${S.live===t.k?'live':''}">
@@ -455,45 +484,53 @@ function renderDesk(){
   else {
     sb.innerHTML = `
       <p class="party">${icon('user')} Hồ sơ #${ORDER.id} · ${ORDER.item} · ${money(ORDER.price)}</p>
-      <div class="deadline" data-ann="8">${icon('clock')}<span>Hạn phản hồi: <b>24:00:00</b>. Quá hạn mà hồ sơ đã đủ bằng chứng → sàn hoàn tiền cho người mua (spec §4).</span></div>
-      ${sc.snapshot ? cmpHTML() : '<p class="note"><b>Không có bản lưu mô tả lúc đặt.</b> Sàn chưa kết luận; người mua được xin ảnh trang sản phẩm lúc mua.</p>'}
+      <div class="deadline" data-ann="8">${icon('clock')}<span>${sc.snapshot
+        ? 'Hạn phản hồi: <b>24:00:00</b>. Quá hạn mà hồ sơ đủ căn cứ (bản lưu + ảnh nhãn) → sàn hoàn tiền cho người mua (spec §4).'
+        : 'Hạn giải trình: <b>24:00:00</b>. Hồ sơ <b>thiếu bản lưu</b>: quá hạn thì trưởng nhóm sàn quyết, <b>không tự hoàn tiền</b>.'}</span></div>
+      ${cmpHTML(0, sc.snapshot)}
       <p class="note" data-ann="11">Tin người mua (đã ẩn lời doạ): <i>"${S.scen==='k9' ? 'Hàng nhận được không giống hình. [nội dung đe doạ đã ẩn]' : 'Mô tả lúc đặt ghi len lông cừu, nhãn thực tế ghi polyester.'}"</i></p>
-      <p class="note">Bằng chứng: ${S.evidence?'ảnh nhãn mác (đã nhận)':'chưa có'}.</p>
-      ${S.seller ? `<p class="note"><b>Bạn đã ${S.seller==='agree'?'đồng ý hoàn tiền':'phản đối'}.</b> ${S.sellerNote?esc(S.sellerNote):''}</p>` : `
-      <label for="sellerNote" class="note" style="display:block;margin-top:12px">Giải trình (nếu phản đối)</label>
-      <textarea id="sellerNote" placeholder="Ví dụ: video đóng hàng ở kho, mã lô…"></textarea>
+      ${S.scen==='k9' ? `<p class="note">Bằng chứng: ${S.evidence?'video mở hộp (đã nhận)':'chưa có'}.</p>` : basisHTML()}
+      ${S.seller ? `<p class="note"><b>Bạn đã ${S.seller==='agree'?(sc.snapshot?'đồng ý hoàn tiền':'tự nguyện nhận trả hàng'):'gửi giải trình'}.</b> ${S.sellerNote?esc(S.sellerNote):''}</p>` : `
+      <label for="sellerNote" class="note" style="display:block;margin-top:12px">Giải trình${sc.snapshot?' (nếu phản đối)':''}</label>
+      <textarea id="sellerNote" placeholder="Ví dụ: video đóng hàng ở kho, mã lô, mô tả lúc đăng bán…"></textarea>
       <div class="acts">
-        <button class="btn primary" id="sellerAgree" data-ann="9">Đồng ý hoàn tiền</button>
-        <button class="btn warn" id="sellerObject">Phản đối, gửi giải trình</button>
-      </div>`}`;
+        <button class="btn primary" id="sellerAgree" data-ann="9">${sc.snapshot?'Đồng ý hoàn tiền':'Tự nguyện nhận trả hàng'}</button>
+        <button class="btn warn" id="sellerObject">${sc.snapshot?'Phản đối, gửi giải trình':'Gửi giải trình cho sàn'}</button>
+      </div>
+      ${sc.snapshot?'':'<p class="note">Thiếu bản lưu nên sàn <b>chưa kết luận</b> bạn sai. Bạn không bắt buộc phải đồng ý; trưởng nhóm sàn sẽ quyết sau khi xem giải trình.</p>'}`}`;
     if (!S.seller){
-      $('#sellerAgree').onclick = ()=> confirmBox('Đồng ý hoàn '+money(ORDER.price)+'?',
+      $('#sellerAgree').onclick = ()=> confirmBox((sc.snapshot?'Đồng ý hoàn ':'Tự nguyện nhận trả hàng và hoàn ')+money(ORDER.price)+'?',
         `<p>Tiền sẽ chuyển về người mua. Việc này <b>khó đảo lại</b>. Hàng trả về kho theo luồng trả hàng.</p><p class="note">Bước này chính là <code class="mono">duyet_giai_ngan</code> (cần người duyệt).</p>`,
         ()=>{ S.seller='agree'; setTool('duyet_giai_ngan','người bán duyệt'); notify('ngay', 'Người mua', 'người bán đã đồng ý hoàn tiền'); finishBuyer('agree'); render(); });
       $('#sellerObject').onclick = ()=>{ S.sellerNote=$('#sellerNote').value.trim(); S.seller='object'; setTool('chuyen_truong_nhom','đã chuyển (tranh chấp)'); notify('+15\'','Trưởng nhóm sàn','người bán phản đối, cần quyết'); render(); };
     }
   }
-  $('#leadState').textContent = S.lead ? 'đã quyết' : (S.seller==='object' || S.scen==='k9' && opened) ? 'cần quyết' : 'không có việc';
-  const needLead = S.seller==='object' || (S.scen==='k9' && opened) || (S.scen==='k1b' && opened);
+  const needLead = S.seller==='object' || (S.scen==='k9' && opened) || (S.scen==='k1b' && opened && S.seller!=='agree');
+  $('#leadState').textContent = S.lead ? 'đã quyết' : needLead ? 'cần quyết' : 'không có việc';
   if (!needLead){ lb.innerHTML = '<p class="empty">Không có ca chờ. Trưởng nhóm chỉ nhận ca khi người bán phản đối, khi không có bản lưu, hoặc ca có cờ khủng hoảng.</p>'; return; }
   lb.innerHTML = `
     <p class="party">${icon('file')} Ca #${ORDER.id} ${S.scen==='k9'?'· <span class="pill review">cờ khủng hoảng</span>':''}</p>
-    <dl class="kv"><dt>Lý do lên bàn</dt><dd>${S.seller==='object'?'Người bán phản đối':S.scen==='k1b'?'Không có bản lưu mô tả lúc đặt':'Có lời đe doạ, người mua đòi hoàn trong 15 phút'}</dd>
-    <dt>Bằng chứng</dt><dd>${S.evidence?'ảnh nhãn mác':'chưa có'}${S.scen==='k9'?' · <b>chưa có video mở hộp</b>':''}</dd>
+    <dl class="kv"><dt>Lý do lên bàn</dt><dd>${S.scen==='k1b'?'Thiếu bản lưu mô tả lúc đặt: AI không được quyết'+(S.seller==='object'?' · người bán đã giải trình':''):S.seller==='object'?'Người bán phản đối':'Có lời đe doạ, người mua đòi hoàn trong 15 phút'}</dd>
+    <dt>Căn cứ</dt><dd>${S.scen==='k9' ? (S.evidence?'video mở hộp':'<b>chưa có video mở hộp</b>') : basisHTML()}</dd>
     ${S.sellerNote?`<dt>Giải trình shop</dt><dd>${esc(S.sellerNote)}</dd>`:''}</dl>
     ${S.lead ? `<p class="note"><b>Đã quyết: ${S.lead==='refund'?'duyệt hoàn tiền':'từ chối khiếu nại'}.</b></p>` : `
     <div class="acts" data-ann="10">
-      <button class="btn primary" id="leadRefund" ${S.scen==='k9'&&!S.evidence?'disabled':''}>Duyệt hoàn tiền</button>
+      <button class="btn primary" id="leadRefund" ${(S.scen==='k9'||S.scen==='k1b')&&!S.evidence?'disabled':''}>Duyệt hoàn tiền</button>
       <button class="btn danger" id="leadReject">Từ chối khiếu nại</button>
     </div>
-    ${S.scen==='k9'?'<p class="note">'+icon('lock')+' "Duyệt hoàn tiền" khoá tới khi có video mở hộp (§3.5 K9).</p>':''}`}`;
+    ${S.scen==='k9'?'<p class="note">'+icon('lock')+' "Duyệt hoàn tiền" khoá tới khi có video mở hộp (§3.5 K9).</p>':''}
+    ${S.scen==='k1b'&&!S.evidence?'<p class="note">'+icon('lock')+' "Duyệt hoàn tiền" khoá tới khi người mua gửi ít nhất 1 ảnh.</p>':''}`}`;
   if (!S.lead){
     const r=$('#leadRefund'), j=$('#leadReject');
     if (r) r.onclick=()=>confirmBox('Duyệt hoàn '+money(ORDER.price)+'?','<p>Tiền về người mua, <b>khó đảo lại</b>. Quyết định được ghi tên người duyệt.</p>',()=>{ S.lead='refund'; setTool('duyet_giai_ngan','trưởng nhóm duyệt'); finishBuyer('agree'); render(); });
     j.onclick=()=>confirmBox('Từ chối khiếu nại?','<p>Đóng khiếu nại, tiền về người bán. <b>Khó đảo lại</b>: người mua mất tiền nếu sàn quyết sai.</p><p class="note"><code class="mono">tu_choi_khieu_nai</code> chỉ chạy khi trưởng nhóm bấm.</p>',()=>{ S.lead='reject'; setTool('tu_choi_khieu_nai','trưởng nhóm duyệt'); finishBuyer('reject'); render(); });
   }
 }
-function cmpHTML(ann){
+function cmpHTML(ann, snapshot=true){
+  if (!snapshot) return `<div class="cmp"${ann?` data-ann="${ann}"`:''}>
+    <div class="void"><span class="h">Lúc đặt · ${ORDER.ordered}</span><b>KHÔNG CÓ BẢN LƯU</b>Sàn không lưu mô tả cho đơn này, nên không có gì để so.</div>
+    <div class="ref"><span class="h">Hiện tại · chỉ tham khảo</span>Chất liệu: ${ORDER.descNow}<br><span class="mono">không dùng làm căn cứ</span></div>
+  </div>`;
   return `<div class="cmp"${ann?` data-ann="${ann}"`:''}>
     <div><span class="h">Lúc đặt · ${ORDER.ordered}</span>Chất liệu: <mark>${ORDER.descThen}</mark></div>
     <div><span class="h">Hiện tại <span class="edited">· sửa ${ORDER.editedAt}</span></span>Chất liệu: <mark>${ORDER.descNow}</mark></div>
@@ -526,7 +563,7 @@ async function runK1(text){
   await typing('Đang mở bản lưu của đơn #'+ORDER.id+'…');
   const check = `<div class="check" data-ann="2">${icon('file')}<span><b>KIỂM:</b> đơn #${ORDER.id} có bản lưu mô tả lúc đặt? → <b>${sc.snapshot?'CÓ':'KHÔNG'}</b>. AI chỉ đọc mô tả theo mã đơn, không đọc trang sản phẩm hiện tại.</span></div>`;
   if (sc.snapshot){
-    ai(`${check}
+    ai(`${verdict(true)}${check}
       <p>Mình đã đối chiếu đơn của bạn. Lúc bạn đặt (${ORDER.ordered}), mô tả ghi <b>${ORDER.descThen}</b>. Mô tả hiện tại đã được sửa ngày ${ORDER.editedAt.split(' ')[0]} thành <b>${ORDER.descNow}</b>.</p>
       ${cmpHTML(3)}
       <div class="src">${icon('shield')} Căn cứ: bản lưu đơn #${ORDER.id}, không phải trang sản phẩm hiện tại.</div>
@@ -535,25 +572,34 @@ async function runK1(text){
       <div class="acts">
         <button class="btn primary" id="upBtn">${icon('up')} Gửi ảnh nhãn mác</button>
         <button class="btn" id="humanBtn" data-ann="6">${icon('user')} Gặp nhân viên sàn</button>
-      </div>`, 1);
+      </div>`, 1, 'ok');
     setTool('yeu_cau_bang_chung','đã gửi mẫu xin ảnh');
     event('Đã gửi mẫu xin ảnh nhãn mác cho bạn (<code class="mono">yeu_cau_bang_chung</code>).','auto',{undo:'yeu_cau_bang_chung', ann:5});
+    notify("+1'", 'Người bán', 'khiếu nại mới kèm bản đối chiếu, hạn phản hồi 24h');
   } else {
-    ai(`${check}
-      <p>Đơn này <b>chưa có bản lưu mô tả lúc đặt</b>, nên mình <b>chưa thể kết luận</b> mô tả đã bị sửa hay chưa. Mình không so với trang sản phẩm hiện tại vì trang đó có thể đã đổi.</p>
-      <div class="conf" data-ann="4"><span class="pill forbid">Chưa đủ căn cứ</span><span class="pill ink">Không tự quyết hoàn hay từ chối</span></div>
-      <p>Bạn gửi giúp mình <b>ảnh chụp trang sản phẩm lúc mua</b> (nếu có) và <b>ảnh nhãn thành phần</b>. Mình đã chuyển hồ sơ cho nhân viên sàn đối chiếu. Hạn trả hàng còn <b>${ORDER.daysLeft} ngày</b>, bạn không bị mất hạn trong lúc chờ.</p>
+    /* Path B: same complaint, but the AI cannot compare — so it must DO less, not just SAY it differently */
+    ai(`${verdict(false)}${check}
+      <p>Đơn này <b>không có bản lưu mô tả lúc đặt</b>, nên mình <b>không đối chiếu được</b> và sẽ <b>không tự mở yêu cầu hoàn tiền</b>. Mình cũng không dùng trang sản phẩm hiện tại làm căn cứ, vì trang đó có thể đã đổi.</p>
+      ${cmpHTML(3, false)}
+      <div class="conf" data-ann="4"><span class="pill forbid">Chưa đủ căn cứ</span><span class="pill ink">Người quyết: trưởng nhóm sàn</span></div>
+      ${basisHTML()}
+      <p>Mình đã chuyển hồ sơ cho <b>trưởng nhóm khiếu nại của sàn</b>. Để họ có căn cứ, bạn gửi giúp <b>ảnh chụp bài đăng lúc mua</b> (nếu có) và <b>ảnh nhãn thành phần</b>. Yêu cầu của bạn đã được ghi nhận trong hạn (còn <b>${ORDER.daysLeft} ngày</b>), nên bạn không bị mất hạn trong lúc chờ.</p>
       <div class="acts">
-        <button class="btn primary" id="upBtn">${icon('up')} Gửi ảnh</button>
+        <button class="btn primary" id="upPage">${icon('up')} Gửi ảnh bài đăng lúc mua</button>
+        <button class="btn" id="upBtn">${icon('up')} Gửi ảnh nhãn mác</button>
         <button class="btn" id="humanBtn" data-ann="6">${icon('user')} Gặp nhân viên sàn</button>
-      </div>`, 1);
-    setTool('yeu_cau_bang_chung','đã gửi mẫu xin ảnh');
-    event('Đã gửi mẫu xin ảnh (<code class="mono">yeu_cau_bang_chung</code>).','auto',{undo:'yeu_cau_bang_chung', ann:5});
-    setTool('chuyen_truong_nhom','đã chuyển (không có bản lưu)');
-    event('Đã chuyển hồ sơ cho trưởng nhóm của sàn (<code class="mono">chuyen_truong_nhom</code>).','auto');
-    notify("+1'", 'Trưởng nhóm sàn', 'ca không có bản lưu mô tả');
+      </div>`, 1, 'no');
+    setTool('yeu_cau_bang_chung','đã gửi mẫu xin 2 ảnh');
+    event('Đã gửi mẫu xin ảnh bài đăng + ảnh nhãn (<code class="mono">yeu_cau_bang_chung</code>).','auto',{undo:'yeu_cau_bang_chung', ann:5});
+    setTool('chuyen_truong_nhom','đã chuyển (thiếu bản lưu)');
+    event('Đã chuyển hồ sơ cho trưởng nhóm của sàn ngay từ đầu (<code class="mono">chuyen_truong_nhom</code>).','auto');
+    S.tools['soan_ho_so_hoan_tien']='không chạy: thiếu căn cứ';
+    S.tools['duyet_giai_ngan']='chỉ trưởng nhóm sàn';
+    event('AI <b>không</b> soạn hồ sơ hoàn tiền: thiếu mô tả lúc đặt. Hoàn hay từ chối do <b>trưởng nhóm sàn</b> quyết.','review');
+    notify("+1'", 'Trưởng nhóm sàn', 'ca thiếu bản lưu mô tả, cần quyết');
+    notify("+1'", 'Người bán', 'được mời giải trình (chưa có kết luận), hạn 24h');
+    S.step=2;
   }
-  notify("+5'", 'Người bán', 'có khiếu nại mới, hạn phản hồi 24h');
   wireBuyerButtons(); render();
 }
 async function runK9(text){
@@ -578,11 +624,24 @@ async function runK9(text){
   S.step=2; wireBuyerButtons(); render();
 }
 function wireBuyerButtons(){
-  const up=$('#upBtn'), hu=$('#humanBtn');
-  if (up) up.onclick = async ()=>{
+  const up=$('#upBtn'), hu=$('#humanBtn'), pg=$('#upPage');
+  /* path B: each photo is added to the leader's file; nothing is drafted for refund */
+  const uploadB = async (kind, btn)=>{
+    btn.disabled=true;
+    add(`<div class="upload"><div class="label-photo" aria-label="${kind==='page'?'Ảnh bài đăng lúc mua (dựng)':'Ảnh nhãn mác (dựng)'}">${kind==='page'?'BÀI ĐĂNG<br>04/11<br>len lông cừu':'NHÃN<br>100%<br>POLYESTER'}</div><span>${kind==='page'?'chup_bai_dang.png':'anh_nhan_mac.jpg'}</span></div>`,'msg me');
+    S.ev[kind]=true; S.evidence=true;
+    await typing('Đang thêm vào hồ sơ…');
+    event(`Đã thêm ${kind==='page'?'ảnh bài đăng':'ảnh nhãn'} vào hồ sơ của trưởng nhóm sàn.`,'auto');
+    ai(`<p>Mình đã thêm ${kind==='page'?'ảnh bài đăng lúc mua':'ảnh nhãn mác'} vào hồ sơ. ${kind==='page'?'Ảnh này do bạn chụp nên <b>nhân viên sàn phải kiểm</b>, mình không tự coi nó là bản lưu.':''} Mình vẫn <b>không tự mở yêu cầu hoàn tiền</b>; trưởng nhóm sàn sẽ quyết.</p>${basisHTML()}`, 0, 'no');
+    render();
+  };
+  if (S.scen==='k1b'){
+    if (pg) pg.onclick=()=>uploadB('page', pg);
+    if (up) up.onclick=()=>uploadB('label', up);
+  } else if (up) up.onclick = async ()=>{
     up.disabled=true;
     const d=add(`<div class="upload"><div class="label-photo" aria-label="Ảnh nhãn mác (dựng)">${S.scen==='k9'?'VIDEO<br>mở hộp<br>0:42':'NHÃN<br>100%<br>POLYESTER'}</div><span>${S.scen==='k9'?'video_mo_hop.mp4':'anh_nhan_mac.jpg'}</span></div>`,'msg me');
-    S.evidence=true; S.step=2;
+    S.evidence=true; S.ev.label=true; S.step=2;
     await typing('Đang gom hồ sơ…');
     setTool('soan_ho_so_hoan_tien','đã soạn, tiền giữ ở sàn');
     event('Đã soạn hồ sơ hoàn tiền '+money(ORDER.price)+', tiền vẫn giữ ở sàn (<code class="mono">soan_ho_so_hoan_tien</code>).','auto');
