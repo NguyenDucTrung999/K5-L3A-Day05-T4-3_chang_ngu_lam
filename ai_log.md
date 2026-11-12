@@ -58,3 +58,14 @@
     + Chỉ rõ rủi ro còn lại (Residual Risk) liên quan đến video mở kiện hàng dàn dựng tinh vi cần quy trình đối soát hậu kiểm của con người.
 - Mục đích: Đạt chuẩn tối đa các tiêu chí Rubric R3 (25 điểm) và Rubric R6 (5 điểm).
 
+### 6. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
+- Vị trí thay đổi: Toàn bộ các phần từ Header, Mục §3, Mục §4 và Mục §6 trên nhánh main và nhánh trung.
+- Nội dung thay đổi:
+  - Tích hợp đóng góp của Đỗ Minh Hiếu tại Mục §3.1 (Kịch bản K1: Người bán sửa mô tả sau khi khách đặt hàng): Bổ sung câu thoại nguyên văn lịch sự chuẩn CSKH Shopee, giao diện hiển thị thẻ so sánh Snapshot đơn hàng (Cột trái: lúc đặt 04/11 - Cột phải: lúc sửa 06/11), phân loại Lỗi hệ thống (System Error), và kiến trúc Snapshot bất biến để cứu lỗi mà câu chữ không cứu được.
+  - Tích hợp đóng góp của Nguyễn Huy Thụ tại Mục §4 (Mức tự chủ của 5 công cụ): Bảng phân bổ 5 tool theo Cost-of-Error, giải pháp sáng tạo tách công cụ soan_hoan_tien thành 2 bước (soan_ho_so_hoan_tien tự làm và duyet_giai_ngan cần người duyệt), bảng kiểm thử 3 kịch bản khớp hoàn toàn với bảng kịch bản rủi ro, và tuyên bố đổi lời hứa với người dùng.
+  - Đánh giá logic toàn diện:
+    + Chuẩn hóa lỗi chính tả tên thành viên "Nguyễn Huy Thứ" thành "Nguyễn Huy Thụ" và thống nhất bảng phân công.
+    + Đảm bảo tính liên kết chặt chẽ giữa 10 kịch bản Mục §2, 2 kịch bản đắt nhất Mục §3 (K1 và K9), cơ chế tự chủ Mục §4 và 3 tiêu chí nghiệm thu Mục §6.
+  - Hoàn tất commit trên nhánh main (commit `0050afb`) và đồng bộ sạch sẽ sang nhánh trung (commit `5d2ecf5`).
+- Mục đích: Đồng bộ bài nộp hoàn chỉnh nhất lên nhánh main, chuẩn bị sẵn sàng cho Chặng 5 (Prototype) và Chặng 7 (Demo).
+
