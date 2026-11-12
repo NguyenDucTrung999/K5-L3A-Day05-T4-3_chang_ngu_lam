@@ -120,3 +120,4 @@ Trong phiên làm việc cuối cùng trước khi đóng gói nộp bài, nhóm
 10. **B6 & B8 (Đồng bộ Sổ quyền hạn và Tách tool):** Tách `soan_hoan_tien` thành 2 dòng `soan_ho_so_hoan_tien` (Tự làm) và `duyet_giai_ngan` (Cần người duyệt), bổ sung điều kiện quá hạn 24h chỉ tự hoàn khi hồ sơ đã có đủ bằng chứng.
 11. **B7 (Điều chỉnh Tiêu chí 2 ở §6):** Video mở hộp chỉ bắt buộc khi có tranh chấp hoặc lời đe dọa; ca shop đã nhận gửi nhầm thì hoàn tiền ngay khi shop đồng ý.
 12. **B9 (Bổ sung HAX G1, G2, G9 vào §3.5):** Tích hợp trọn vẹn 6 nguyên tắc HAX/PAIR khớp 100% với các điểm đánh số trên prototype.
+
