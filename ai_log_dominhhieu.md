@@ -67,3 +67,16 @@ Phần được giao: **§2 Kịch bản rủi ro — lớp ① Nguồn sự th�
 - [ ] **Loại lỗi:** thêm vì sao cách nói và cách sửa đi theo lỗi hệ thống (AI xin lỗi thay hệ thống, không bắt người mua tự chứng minh).
 - [ ] **Quyết định:** lý do loại "chuyển người" ghi rõ ai mất gì, mất bao lâu.
 - [ ] **HAX/PAIR:** chờ Trung chốt; dự kiến G11 = thẻ so sánh, G2 = câu ở Đường B.
+
+## Cập nhật 12/11/2026: prototype (§5, phục vụ demo §7)
+
+### 6. File mới: `prototype/index.html`
+- **AI làm:** Claude Code dựng toàn bộ file theo yêu cầu của mình (dùng skill `ui-ux-pro-max` để chọn style). Theme "Hồ sơ Đối chiếu": giấy kẻ ô, 1 màu mực, 3 màu đúng bằng 3 mức tự chủ (xanh = tự làm, vàng = cần duyệt, đỏ = cấm).
+- **Nội dung lấy từ spec:** K1 (§3.1), K9 (§3.2), mức tự chủ (§4, kể cả tách `soan_ho_so_hoan_tien` / `duyet_giai_ngan`), HAX G10 / G11 / PAIR (§3.4).
+- **Chỗ prototype làm khác spec hiện tại (để sửa lại spec cho khớp):**
+  - K9 không trích "Điều 3.2" (nguồn không có trong dữ liệu track).
+  - Không hứa "dưới 5 phút".
+  - K1 không tự đóng chat sau 10 phút.
+  - K1 có thêm Đường B (đơn không có bản lưu).
+- **Mock:** không backend, không gọi AI thật. Câu AI nói được soạn sẵn. Ca lạ được xử lý bằng so khớp từ khoá (SĐT · hàng giả/khoá shop · doạ bóc phốt · mô tả sai · tin cụt).
+- **Đã kiểm:** bấm qua K1 có bản lưu, K1 không có bản lưu, K9, 3 ca lạ, người bán đồng ý / phản đối, trưởng nhóm từ chối. Không lỗi JS. Không tràn ngang ở 375px và 1280px.
