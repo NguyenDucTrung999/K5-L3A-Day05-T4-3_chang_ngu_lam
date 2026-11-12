@@ -80,3 +80,11 @@ Phần được giao: **§2 Kịch bản rủi ro — lớp ① Nguồn sự th�
   - K1 có thêm Đường B (đơn không có bản lưu).
 - **Mock:** không backend, không gọi AI thật. Câu AI nói được soạn sẵn. Ca lạ được xử lý bằng so khớp từ khoá (SĐT · hàng giả/khoá shop · doạ bóc phốt · mô tả sai · tin cụt).
 - **Đã kiểm:** bấm qua K1 có bản lưu, K1 không có bản lưu, K9, 3 ca lạ, người bán đồng ý / phản đối, trưởng nhóm từ chối. Không lỗi JS. Không tràn ngang ở 375px và 1280px.
+
+## Cập nhật 12/11/2026: K1 Đường A/B khác nhau ở hành vi
+
+### 7. `prototype/index.html` (push `main`) + `spec.md` §3.1 (branch này)
+- **Vấn đề mình phát hiện:** 2 nhánh K1 chỉ khác câu chữ. Sau khi gửi ảnh, cả 2 đi cùng một luồng duyệt.
+- **AI sửa (theo yêu cầu của mình, sau 1 hint):** tách theo 3 trục "biết gì · làm gì · ai quyết".
+  - Prototype: dải trạng thái đỏ/xanh, ô "lúc đặt" gạch chéo, danh sách căn cứ ✓/✗. Nhánh B không chạy `soan_ho_so_hoan_tien`, chỉ trưởng nhóm sàn quyết, người bán chỉ được giải trình hoặc tự nguyện nhận trả, quá hạn không tự hoàn.
+  - Spec §3.1 Đường B: thêm "thấy gì · làm gì tiếp · ai được báo · quyết định (dừng và chuyển người; loại 2 cách kia)" + bảng so sánh A/B.

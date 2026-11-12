@@ -45,7 +45,7 @@ Mở `prototype/index.html` bằng trình duyệt, không cần server.
 - [ ] **B1. §3.2 K9** trích *"Chính sách Trả hàng & Hoàn tiền Shopee Điều 3.2"*. Nguồn này **không có trong dữ liệu track**: chính là lỗi ① (bịa nguồn). Prototype ghi: *"Căn cứ: quy trình đối soát trả hàng của sàn. Lời đe doạ không thay cho bằng chứng."*
 - [ ] **B2. §3.2 K9 và §6 tiêu chí 3** hứa *"phản hồi dưới 5 phút"*. Không có tool hay dữ liệu nào đảm bảo được. Prototype ghi: *"thời gian phản hồi phụ thuộc giờ trực"*.
 - [ ] **B3. §3.1 K1** tự đóng hội thoại sau 10 phút: ép người mua, có thể làm mất khiếu nại. Prototype không đóng chat; hạn trả hàng vẫn hiển thị.
-- [ ] **B4. §3.1 K1 thiếu Đường B** (đơn không có bản lưu mô tả lúc đặt): AI nói "chưa đủ căn cứ", xin ảnh trang sản phẩm lúc mua + nhãn, chuyển trưởng nhóm sàn. Câu AI nói ở K1 cũng cần thêm: báo đây là trợ lý AI · hạn trả hàng còn bao nhiêu ngày · người bán có 24h phản hồi. (Chi tiết: `ai_log_dominhhieu.md`, mục 5.)
+- [x] **B4. §3.1 K1 thiếu Đường B** — xong: spec §3.1 đã có Đường B đầy đủ + bảng so sánh A/B; prototype `fb6625e` tách hành vi 2 đường. (đơn không có bản lưu mô tả lúc đặt): AI nói "chưa đủ căn cứ", xin ảnh trang sản phẩm lúc mua + nhãn, chuyển trưởng nhóm sàn. Câu AI nói ở K1 cũng cần thêm: báo đây là trợ lý AI · hạn trả hàng còn bao nhiêu ngày · người bán có 24h phản hồi. (Chi tiết: `ai_log_dominhhieu.md`, mục 5.)
 - [ ] **B5. §3.3 mâu thuẫn §3.5:** §3.3 nói hệ thống *đã có* snapshot nhưng AI đọc bản mới; §3.5 nói *phải tạo* snapshot. Chốt 1 cách. Gợi ý: snapshot đã có, thiết kế cứu là **AI chỉ đọc mô tả theo mã đơn**, không đọc trang sản phẩm hiện tại.
 - [ ] **B6. §4 `soan_hoan_tien`:** "quá hạn 24h → tự động hoàn tiền" xung đột với khoá cứng K9 ở §3.5 (cần video mở hộp). Thêm điều kiện: *chỉ tự hoàn khi hồ sơ đã đủ bằng chứng*.
 - [ ] **B7. §6 tiêu chí 2** bắt mọi ca hoàn tiền phải có video mở hộp, mâu thuẫn với §4.3 K8 (shop đã nhận gửi nhầm, chỉ cần shop bấm đồng ý). Sửa tiêu chí: video chỉ bắt buộc khi **có tranh chấp hoặc lời đe doạ**.
@@ -67,3 +67,15 @@ Mở `prototype/index.html` bằng trình duyệt, không cần server.
 | Thụ | B8 |
 | Người thứ 4 | A2, A3 (§5 + ảnh) |
 | Cả nhóm | A1 · C · A5 sau demo |
+
+## Cập nhật: K1 Đường A và Đường B khác nhau ở hành vi
+
+- Prototype (`main`, `fb6625e`), ca **"K1 · không có bản lưu"**:
+  - Dải đỏ "Chưa đối chiếu được".
+  - Ô "lúc đặt" để trống, gạch chéo.
+  - Danh sách căn cứ ✓/✗.
+  - AI **không** soạn hồ sơ hoàn tiền.
+  - Chỉ trưởng nhóm sàn quyết; người bán chỉ tự nguyện nhận trả hoặc giải trình.
+  - Quá hạn **không** tự hoàn tiền.
+- Spec (`dominhhieu`): §3.1 Đường B có đủ "thấy gì · làm gì tiếp · ai được báo · quyết định + phương án loại", kèm bảng so sánh A/B.
+- [ ] Người viết §5: bảng chú thích ②③④⑧ đã đổi câu chữ, cần chép lại từ prototype.
