@@ -35,3 +35,4 @@
    * **Ca lạ (tự gõ):** Nhập tin nhắn bất kỳ (ví dụ: xin số điện thoại, đòi khóa shop, đòi đền tiền mặt...).
 3. Bấm nút **"Chú thích số"** trên thanh công cụ để hiển thị các ghim số ① đến ⑪ trỏ trực tiếp vào các nguyên tắc HAX/PAIR và mức tự chủ.
 4. Bấm **"Gửi"** -> gửi ảnh đối chiếu -> chuyển sang **Màn 2 (Bàn duyệt)** để người bán bấm [Đồng ý] hoặc [Phản đối], và Trưởng nhóm sàn đưa ra phán quyết cuối cùng.
+

@@ -96,8 +96,33 @@ Trong Trò chuyện với Shopee, khi người mua đang báo "hàng nhận khô
 
 #### Đường B: Đơn hàng KHÔNG CÓ bản lưu mô tả lúc đặt (Low confidence / Thiếu dữ liệu)
 - **AI nói gì (nguyên văn):**  
-  "Chào bạn, tôi là trợ lý AI của Shopee. Rất tiếc, hệ thống chưa có đủ căn cứ đối chiếu tự động do đơn hàng này không có bản lưu mô tả tại thời điểm đặt. Đơn của bạn còn 14 ngày trong thời hạn trả hàng. Bạn vui lòng gửi giúp Shopee ảnh chụp màn hình bài đăng lúc bạn mua (nếu có) và ảnh nhãn mác thực tế trên áo. Shopee sẽ chuyển ngay hồ sơ cho Trưởng nhóm khiếu nại của sàn để hỗ trợ bạn trực tiếp."
-- **Hành động hệ thống:** Tự động gọi công cụ `yeu_cau_bang_chung` (xin ảnh) và `chuyen_truong_nhom` (chuyển người thật). Thu hẹp phạm vi khi nghi ngờ (HAX G10).
+  "Chào bạn, tôi là trợ lý AI của Shopee. Đơn này không có bản lưu mô tả lúc đặt, nên tôi không đối chiếu được và sẽ không tự mở yêu cầu hoàn tiền. Tôi cũng không dùng trang sản phẩm hiện tại làm căn cứ, vì trang đó có thể đã bị sửa. Tôi đã chuyển hồ sơ cho Trưởng nhóm khiếu nại của sàn. Để họ có căn cứ, bạn gửi giúp ảnh chụp bài đăng lúc mua (nếu có) và ảnh nhãn mác thực tế trên áo. Yêu cầu của bạn đã được ghi nhận trong hạn (còn 14 ngày), nên bạn không bị mất hạn trong lúc chờ."
+- **Người dùng thấy gì trên giao diện:**
+  - Dải trạng thái màu đỏ ở đầu câu trả lời: `Chưa đối chiếu được · thiếu bản lưu lúc đặt` (Đường A là dải xanh `Đã đối chiếu được`) (HAX G2).
+  - Thẻ đối chiếu **vẫn hiện**, nhưng ô "Lúc đặt" để trống, gạch chéo, ghi `KHÔNG CÓ BẢN LƯU`; ô "Hiện tại" bị làm mờ, ghi `chỉ tham khảo · không dùng làm căn cứ`. Chỗ thiếu dữ liệu được nói rõ, không lặng lẽ bỏ thẻ đi (HAX G11, PAIR Explainability).
+  - Danh sách căn cứ ✓/✗: `✗ Mô tả lúc đặt` · `… Ảnh nhãn mác` · `… Ảnh bài đăng lúc mua (người mua gửi, nhân viên phải kiểm)`.
+  - Chip: `Chưa đủ căn cứ` · `Người quyết: trưởng nhóm sàn`.
+  - Nút: `[Gửi ảnh bài đăng lúc mua]` (nút chính) · `[Gửi ảnh nhãn mác]` · `[Gặp nhân viên sàn]`.
+- **Người dùng làm gì tiếp:** Gửi 1 hoặc 2 ảnh. Mỗi ảnh được **thêm vào hồ sơ của trưởng nhóm sàn**. AI **không** gọi `soan_ho_so_hoan_tien` và không coi ảnh người mua tự chụp là bản lưu. Nếu người mua không gửi gì, hồ sơ vẫn nằm ở bàn trưởng nhóm và đã được ghi nhận trong hạn.
+- **Ai được báo, sau bao lâu:**
+  - Trưởng nhóm sàn: ngay khi AI phát hiện thiếu bản lưu (khoảng 1 phút). Đây là người duy nhất được quyết hoàn tiền hoặc từ chối. Nút "Duyệt hoàn tiền" khoá tới khi có ít nhất 1 ảnh.
+  - Người bán: khoảng 1 phút, nhận lời **mời giải trình** (không phải "có khiếu nại chống bạn"), hạn 24 giờ. Người bán chỉ có 2 lựa chọn: tự nguyện nhận trả hàng, hoặc gửi giải trình. Quá hạn thì trưởng nhóm quyết, **không tự hoàn tiền**.
+- **Quyết định chiến lược xử lý:** Chọn *Dừng và chuyển người*.
+  - Loại *trả lời kèm giới hạn* (cách của Đường A): không có bản lưu thì AI không có gì để "giới hạn" theo; mọi kết luận đều là đoán, và sai thì một bên mất tiền.
+  - Loại *hỏi lại người mua*: người mua không thể cung cấp bản lưu của sàn; ảnh họ tự chụp chỉ là bằng chứng một phía, cần người kiểm.
+- **Hành động hệ thống:** Tự động gọi `yeu_cau_bang_chung` (xin 2 ảnh) và `chuyen_truong_nhom` (chuyển người thật). **Không** gọi `soan_ho_so_hoan_tien`. `duyet_giai_ngan` chỉ còn trưởng nhóm sàn được bấm. Thu hẹp phạm vi khi nghi ngờ (HAX G10).
+
+#### So sánh hai đường: khác nhau ở hành vi, không chỉ ở câu chữ
+
+| Trục | Đường A — có bản lưu | Đường B — thiếu bản lưu |
+|---|---|---|
+| AI **biết** gì | Thẻ so sánh 2 bản, tô vàng chỗ khác · dải xanh "Đã đối chiếu được" | Ô "lúc đặt" trống, gạch chéo · dải đỏ "Chưa đối chiếu được" · danh sách căn cứ ✗ |
+| AI **làm** gì | Tự soạn hồ sơ hoàn tiền (`soan_ho_so_hoan_tien`) sau khi có ảnh nhãn · nút chính "Gửi ảnh nhãn mác" | **Không** soạn hồ sơ hoàn tiền · chuyển trưởng nhóm ngay · nút chính "Gửi ảnh bài đăng lúc mua" |
+| **Ai quyết** | Người bán bấm duyệt; phản đối thì trưởng nhóm | Chỉ trưởng nhóm sàn; người bán chỉ tự nguyện nhận trả hoặc giải trình |
+| Quá hạn 24h | Sàn hoàn tiền theo hồ sơ (đủ căn cứ) | Trưởng nhóm quyết, **không** tự hoàn |
+| Chiến lược | Trả lời kèm giới hạn | Dừng và chuyển người |
+
+Lý do: nếu hai đường chỉ khác câu chữ mà vẫn chạy cùng một luồng duyệt, thì ở Đường B người bán có thể bị xử thua (hoặc người mua bị từ chối) chỉ dựa trên ảnh một phía. Đó chính là lỗi lát cắt T4 yêu cầu chặn: "người bán không bị xử thua khi họ đúng". Prototype thể hiện bảng này ở ca demo **"K1 · không có bản lưu"** (Màn 1 số ②③④, Màn 2 số ⑧).
 
 ### 3.2. Kịch bản K9: Khách đe dọa bóc phốt trên mạng xã hội để ép hoàn tiền gấp trong 15 phút (Lớp ④ Đặc thù domain)
 *(Phần do Nguyễn Đức Trung — Trưởng nhóm phụ trách)*
