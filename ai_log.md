@@ -36,3 +36,25 @@
   - Hoàn thiện lập luận cho 2 kịch bản đắt nhất: Kịch bản 1 (phá hủy nguồn sự thật) và Kịch bản 7 (thao túng tài chính và áp lực xã hội), cùng lý do loại trừ kịch bản suýt được chọn là Kịch bản 6.
 - Mục đích: Đạt chuẩn 100% tiêu chí Rubric R2 (10/10 điểm) của đề bài LAB5.
 
+### 4. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
+- Vị trí thay đổi: Toàn bộ file (giải quyết xung đột merge từ nhánh main vào nhánh trung).
+- Nội dung thay đổi:
+  - Đồng bộ format chuẩn và hoàn chỉnh từ nhánh main sang nhánh trung, tích hợp đầy đủ đóng góp của 3 thành viên (Nguyễn Đức Trung, Đỗ Minh Hiếu, Nguyễn Huy Thụ).
+  - Hoàn thiện bảng 10 kịch bản rủi ro tại Mục §2 và lập luận chọn 2 kịch bản đắt nhất (Kịch bản 1 và Kịch bản 9) cùng kịch bản suýt được chọn (Kịch bản 7).
+  - Giải quyết dứt điểm xung đột merge (`both added: spec.md`) và tạo commit merge sạch sẽ.
+
+### 5. File thay đổi: teamwork/K5-L3A-Day05-T4-3_chang_ngu_lam/spec.md
+- Vị trí thay đổi: Từ dòng 71 đến dòng 120 (Mục §3) và từ dòng 138 đến dòng 165 (Mục §6).
+- Nội dung thay đổi (phần phân công của Nguyễn Đức Trung - Trưởng nhóm):
+  - Mục §3 (Khi AI sai):
+    + Hoàn thiện thiết kế chi tiết cho Kịch bản K9 (Khách đe dọa bóc phốt trên mạng xã hội để ép hoàn tiền gấp trong 15 phút): Lời thoại nguyên văn của AI, các thành phần trực quan người dùng thấy (thẻ cảnh báo, căn cứ chính sách, nút nộp video mở hộp, nút thoát hiểm gặp người), các bước tiếp theo và thông báo đến người bán (60 giây) và trưởng nhóm sàn (5 phút).
+    + Lập luận chiến lược 4 ý: Chọn trả lời kèm giới hạn; loại phương án hỏi lại vu vơ và loại phương án dừng chuyển người ngay lập tức kèm lý do cụ thể.
+    + Phân loại lỗi: Lỗi ngữ cảnh (Context Error theo nguyên tắc PAIR) và cách ứng xử chuyên nghiệp không nhận lỗi sai của sàn.
+    + Chốt 3 nguyên tắc HAX/PAIR dùng chung cho cả nhóm và Prototype: HAX G10 (Thu hẹp phạm vi khi nghi ngờ), HAX G11 (Giải thích căn cứ hệ thống), và PAIR (Thiết kế thoát hiểm Graceful Failure & Human Escalation).
+    + Chỉ ra lỗi sửa câu chữ không cứu được (tự ý giải ngân soan_hoan_tien khi bị đe dọa) và thiết kế giải pháp cứu nó bằng ràng buộc cứng ở tầng kiến trúc hệ thống (Hard Constraint).
+  - Mục §6 (Tốt là gì):
+    + Xây dựng 3 tiêu chí Pass/Fail chấm được rõ ràng: Tiêu chí 1 (Tính toàn vẹn dữ liệu gốc - Ground Truth Integrity), Tiêu chí 2 (Tính trung lập tài chính - Financial Neutrality), Tiêu chí 3 (Quyền kiểm soát và Thoát hiểm minh bạch - Transparency & Fallback Control).
+    + Bảng chấm thử thiết kế trên 2 kịch bản đắt nhất (K1 và K9) đạt 3/3 tiêu chí.
+    + Chỉ rõ rủi ro còn lại (Residual Risk) liên quan đến video mở kiện hàng dàn dựng tinh vi cần quy trình đối soát hậu kiểm của con người.
+- Mục đích: Đạt chuẩn tối đa các tiêu chí Rubric R3 (25 điểm) và Rubric R6 (5 điểm).
+
