@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Hồ sơ Đối chiếu — prototype T4</title>
+<meta name="description" content="Prototype LAB5 T4: trợ lý AI khiếu nại 'hàng không đúng mô tả' — dữ liệu dựng, không backend.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Fraunces:opsz,wght@9..144,600;9..144,700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* =========================================================
+   Theme "Hồ sơ Đối chiếu" — a case file on a ruled desk.
+   One ink, one paper, three status colours that mean
+   exactly the three autonomy levels (tự làm / cần duyệt / cấm).
+   ========================================================= */
+:root{
+  --paper:#EEEDE7; --sheet:#FFFFFF; --sheet-2:#F7F6F2;
+  --ink:#16181D; --ink-2:#464B55; --ink-3:#6B707A;
+  --rule:#D6D4CC; --rule-2:#B9B6AB; --grid:rgba(22,24,29,.045);
+  --auto:#0A6B5C;  --auto-bg:#E1F0EC;     /* tự làm  — teal  */
+  --review:#8A5300; --review-bg:#FBEFD9;  /* cần duyệt — amber */
+  --forbid:#B42318; --forbid-bg:#FBE5E2;  /* cấm — red */
+  --mark:#FFE98A;                         /* highlighter for diffs */
+  --focus:#1F5FD6;
+  --r:6px; --shadow:0 1px 0 rgba(22,24,29,.06), 0 8px 24px -12px rgba(22,24,29,.18);
+  --f-ui:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-head:"Fraunces",Georgia,"Times New Roman",serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"Cascadia Mono",Consolas,monospace;
+  --dur:180ms;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --paper:#121418; --sheet:#1B1E24; --sheet-2:#20242B;
+    --ink:#ECEBE6; --ink-2:#B9BCC4; --ink-3:#9296A0;
+    --rule:#2E333C; --rule-2:#454B56; --grid:rgba(236,235,230,.04);
+    --auto:#5CC9B4; --auto-bg:#12302B;
+    --review:#F0B35A; --review-bg:#33270F;
+    --forbid:#FF8B7E; --forbid-bg:#3A1A17;
+    --mark:#5C4E12; --focus:#8AB4FF;
+    --shadow:0 1px 0 rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+  }
+}
+@media (prefers-reduced-motion: reduce){ :root{ --dur:0ms } *{animation:none!important;transition:none!important} }
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{
+  font:16px/1.55 var(--f-ui); color:var(--ink); background:var(--paper);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:24px 24px; min-height:100dvh;
+}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--focus);outline-offset:2px;border-radius:4px}
+.mono{font-family:var(--f-mono);font-size:.78rem;letter-spacing:.04em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+svg.i{width:18px;height:18px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---------- top bar ---------- */
+.top{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--paper) 92%,transparent);backdrop-filter:blur(6px);border-bottom:1px solid var(--rule)}
+.top-in{max-width:1280px;margin:0 auto;padding:12px 16px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;line-height:1.15;margin-right:auto}
+.brand b{font:700 1.3rem/1.1 var(--f-head);letter-spacing:-.01em}
+.brand span{color:var(--ink-3)}
+.seg{display:inline-flex;border:1px solid var(--rule-2);border-radius:999px;padding:3px;background:var(--sheet)}
+.seg button{border:0;background:none;padding:8px 14px;min-height:40px;border-radius:999px;cursor:pointer;font-weight:600;font-size:.92rem;color:var(--ink-2)}
+.seg button[aria-selected=true]{background:var(--ink);color:var(--sheet)}
+.tool-btn{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--rule-2);background:var(--sheet);border-radius:999px;padding:8px 14px;min-height:40px;cursor:pointer;font-weight:600;font-size:.92rem}
+.tool-btn[aria-pressed=true]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink)}
+
+/* ---------- scenario bar ---------- */
+.scen{max-width:1280px;margin:0 auto;padding:14px 16px 0;display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.scen .mono{color:var(--ink-3);margin-right:4px}
+.chip{border:1px dashed var(--rule-2);background:transparent;border-radius:var(--r);padding:7px 12px;min-height:38px;cursor:pointer;font-size:.9rem;color:var(--ink-2)}
+.chip[aria-pressed=true]{border-style:solid;border-color:var(--ink);color:var(--ink);background:var(--sheet)}
+.chip:hover{color:var(--ink)}
+
+/* ---------- layout ---------- */
+main{max-width:1280px;margin:0 auto;padding:16px}
+.screen{display:none}
+.screen.on{display:grid;gap:20px;grid-template-columns:minmax(0,420px) minmax(0,1fr);align-items:start}
+@media (max-width:900px){ .screen.on{grid-template-columns:minmax(0,1fr)} }
+@media (max-width:640px){
+  .top{position:static}
+  .top-in{gap:10px}
+  .brand{flex-basis:100%}
+  .seg{flex:1 1 100%}
+  .seg button{flex:1;padding:8px 6px;font-size:.86rem;line-height:1.25}
+  .conf .pill{white-space:normal}
+  .tool-btn{flex:1;justify-content:center;font-size:.86rem;padding:8px 10px}
+  .screen-h h1{font-size:1.3rem}
+  .phone{height:640px;min-height:0}
+  .cmp{grid-template-columns:minmax(0,1fr)}
+  .cmp>div+div{border-left:0;border-top:1px solid var(--rule)}
+}
+.screen-h{grid-column:1/-1;display:flex;align-items:baseline;gap:12px;flex-wrap:wrap;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.screen-h h1{font:700 1.6rem/1.15 var(--f-head);margin:0;letter-spacing:-.015em;overflow-wrap:anywhere}
+.screen-h>*,.file,.phone{min-width:0}
+.screen-h p{margin:0;color:var(--ink-2)}
+
+/* ---------- phone / chat ---------- */
+.phone{background:var(--sheet);border:1px solid var(--rule-2);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;height:min(760px,calc(100dvh - 190px));min-height:560px;position:relative}
+.ph-top{display:flex;align-items:center;gap:10px;padding:14px 16px;border-bottom:1px solid var(--rule)}
+.ph-top .av{width:34px;height:34px;border-radius:50%;background:var(--ink);color:var(--sheet);display:grid;place-items:center;font:600 .8rem var(--f-mono)}
+.ph-top .who{line-height:1.2}
+.ph-top .who b{display:block;font-size:.98rem}
+.ai-tag{display:inline-flex;align-items:center;gap:6px;font:600 .7rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink);border:1px solid var(--ink);border-radius:4px;padding:1px 6px}
+.order-strip{display:flex;gap:10px;align-items:center;padding:10px 16px;background:var(--sheet-2);border-bottom:1px solid var(--rule);font-size:.88rem}
+.order-strip .thumb{width:38px;height:38px;border-radius:6px;background:repeating-linear-gradient(135deg,var(--rule) 0 6px,var(--sheet) 6px 12px);flex:none}
+.order-strip .meta{min-width:0}
+.order-strip .meta b{display:block;overflow-wrap:anywhere}
+.log{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth}
+.msg{max-width:88%;padding:10px 13px;border-radius:14px;font-size:.95rem;animation:in var(--dur) ease-out both}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.msg.me{align-self:flex-end;background:var(--ink);color:var(--sheet);border-bottom-right-radius:4px}
+.msg.ai{align-self:flex-start;background:var(--sheet-2);border:1px solid var(--rule);border-bottom-left-radius:4px}
+.msg.ai .by{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.msg.ai p{margin:0 0 8px}
+.msg.ai p:last-child{margin-bottom:0}
+.typing{align-self:flex-start;display:flex;gap:8px;align-items:center;color:var(--ink-3);font-size:.85rem}
+.dots{display:inline-flex;gap:3px}.dots i{width:5px;height:5px;border-radius:50%;background:currentColor;animation:b 1s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes b{0%,100%{opacity:.25}50%{opacity:1}}
+.event{align-self:stretch;display:flex;gap:10px;align-items:center;flex-wrap:wrap;font-size:.84rem;padding:8px 10px;border-left:3px solid var(--auto);background:var(--auto-bg);border-radius:0 var(--r) var(--r) 0;animation:in var(--dur) ease-out both}
+.event.review{border-color:var(--review);background:var(--review-bg)}
+.event.forbid{border-color:var(--forbid);background:var(--forbid-bg)}
+.event .grow{flex:1;min-width:160px}
+.event.undone{opacity:.6;text-decoration:line-through}
+.linkbtn{border:0;background:none;padding:6px 8px;min-height:32px;cursor:pointer;font-weight:600;text-decoration:underline;text-underline-offset:3px}
+
+/* check line (if-statement) */
+.check{display:flex;gap:8px;align-items:flex-start;font-size:.86rem;padding:8px 10px;border:1px dashed var(--rule-2);border-radius:var(--r);background:var(--sheet);margin-bottom:8px}
+.check b{font-family:var(--f-mono);font-size:.8rem}
+
+/* comparison card */
+.cmp{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--rule-2);border-radius:var(--r);overflow:hidden;margin:8px 0;background:var(--sheet)}
+.cmp>div{padding:9px 10px;font-size:.84rem;min-width:0}
+.cmp>div+div{border-left:1px solid var(--rule)}
+.cmp .h{display:block;font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);margin-bottom:4px}
+.cmp mark{background:var(--mark);color:inherit;padding:0 2px;border-radius:2px}
+.cmp .edited{color:var(--forbid);font:600 .68rem var(--f-mono)}
+.src{display:flex;gap:6px;align-items:center;font-size:.78rem;color:var(--ink-2);margin:4px 0 8px}
+.conf{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.pill{display:inline-flex;align-items:center;gap:6px;font:600 .72rem var(--f-mono);letter-spacing:.03em;padding:3px 8px;border-radius:999px;border:1px solid currentColor;white-space:nowrap}
+.pill.auto{color:var(--auto);background:var(--auto-bg)}
+.pill.review{color:var(--review);background:var(--review-bg)}
+.pill.forbid{color:var(--forbid);background:var(--forbid-bg)}
+.pill.ink{color:var(--ink-2);background:var(--sheet)}
+.acts{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.btn{display:inline-flex;align-items:center;gap:8px;justify-content:center;border:1px solid var(--ink);background:var(--sheet);color:var(--ink);border-radius:var(--r);padding:9px 14px;min-height:44px;cursor:pointer;font-weight:600;font-size:.9rem;transition:transform var(--dur),background var(--dur)}
+.btn:active{transform:scale(.98)}
+.btn.primary{background:var(--ink);color:var(--sheet)}
+.btn.warn{border-color:var(--review);color:var(--review)}
+.btn.danger{border-color:var(--forbid);color:var(--forbid)}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+.upload{display:flex;gap:10px;align-items:center;margin-top:6px}
+.label-photo{width:84px;height:84px;border-radius:8px;border:1px solid var(--rule-2);background:var(--sheet);display:grid;place-items:center;text-align:center;font:600 .62rem/1.3 var(--f-mono);padding:6px;position:relative;flex:none}
+.label-photo::before{content:"";position:absolute;inset:6px;border:1px dashed var(--rule-2);border-radius:4px}
+
+.compose{border-top:1px solid var(--rule);padding:10px;display:flex;gap:8px;background:var(--sheet)}
+.compose label{flex:1}
+.compose input{width:100%;min-height:44px;border:1px solid var(--rule-2);border-radius:999px;padding:0 14px;background:var(--sheet-2)}
+.compose .btn{border-radius:999px}
+
+/* ---------- dossier (case file) ---------- */
+.file{background:var(--sheet);border:1px solid var(--rule-2);border-radius:var(--r);box-shadow:var(--shadow)}
+.file+.file{margin-top:16px}
+.file>header{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--rule)}
+.file>header h2{font:700 1.08rem var(--f-head);margin:0}
+.file>header .mono{color:var(--ink-3);margin-left:auto}
+.file .body{padding:14px 16px}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:.9rem;margin:0}
+.kv dt{color:var(--ink-3)}
+.kv dd{margin:0;overflow-wrap:anywhere}
+table.ledger{width:100%;border-collapse:collapse;font-size:.88rem}
+.ledger th{font:600 .68rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3);text-align:left;padding:6px 8px;border-bottom:1px solid var(--rule-2)}
+.ledger td{padding:9px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+.ledger tr:last-child td{border-bottom:0}
+.ledger code{font:500 .8rem var(--f-mono);overflow-wrap:anywhere}
+.ledger .why{display:block;color:var(--ink-3);font-size:.8rem;margin-top:2px}
+.ledger tr.live td{background:color-mix(in srgb,var(--mark) 35%,transparent)}
+.state{font:600 .74rem var(--f-mono);white-space:nowrap}
+@media (max-width:560px){ .ledger .hide-s{display:none} }
+.timeline{list-style:none;margin:0;padding:0;font-size:.88rem}
+.timeline li{display:grid;grid-template-columns:62px 1fr;gap:10px;padding:7px 0;border-bottom:1px dashed var(--rule)}
+.timeline li:last-child{border-bottom:0}
+.timeline .t{font:600 .74rem var(--f-mono);color:var(--ink-3);padding-top:2px}
+.timeline .pending{color:var(--ink-3)}
+.empty{color:var(--ink-3);font-size:.88rem;margin:0}
+
+/* ---------- screen 2 ---------- */
+.desk{display:flex;flex-direction:column;gap:16px}
+.party{display:flex;align-items:center;gap:8px;font:600 .72rem var(--f-mono);letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.deadline{display:flex;gap:10px;align-items:center;padding:10px 12px;border:1px solid var(--review);background:var(--review-bg);border-radius:var(--r);font-size:.9rem;color:var(--ink)}
+.deadline b{font-family:var(--f-mono)}
+textarea{width:100%;min-height:84px;border:1px solid var(--rule-2);border-radius:var(--r);padding:10px;background:var(--sheet-2);resize:vertical}
+.note{font-size:.84rem;color:var(--ink-2);margin:8px 0 0}
+.forbidden{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px dashed var(--forbid);border-radius:var(--r);color:var(--ink);background:var(--forbid-bg);font-size:.88rem}
+
+/* ---------- modal ---------- */
+.scrim{position:fixed;inset:0;background:rgba(10,11,14,.55);display:none;place-items:center;padding:16px;z-index:50}
+.scrim.on{display:grid}
+.modal{background:var(--sheet);border-radius:10px;max-width:460px;width:100%;padding:20px;box-shadow:0 30px 60px -20px rgba(0,0,0,.5);animation:in var(--dur) ease-out}
+.modal h3{font:700 1.2rem var(--f-head);margin:0 0 8px}
+.modal .acts{justify-content:flex-end}
+
+/* ---------- annotations (numbered markers for screenshots) ---------- */
+[data-ann]{position:relative}
+.ann-on [data-ann]::after{
+  content:attr(data-ann); position:absolute; top:-10px; right:-10px; z-index:5;
+  width:24px; height:24px; border-radius:50%; background:var(--forbid); color:#fff;
+  font:700 .78rem/24px var(--f-mono); text-align:center; box-shadow:0 0 0 2px var(--sheet);
+}
+.ann-on .ai-tag[data-ann]::after{top:-6px;right:-30px}
+.legend{display:none;grid-column:1/-1}
+.ann-on .legend{display:block}
+.legend ol{margin:0;padding:0;list-style:none;display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(280px,1fr))}
+.legend li{display:grid;grid-template-columns:26px 1fr;gap:8px;font-size:.86rem;align-items:start}
+.legend .n{width:24px;height:24px;border-radius:50%;background:var(--forbid);color:#fff;font:700 .78rem/24px var(--f-mono);text-align:center}
+.legend .p{display:block;color:var(--ink-3);font-size:.8rem}
+
+footer{max-width:1280px;margin:0 auto;padding:8px 16px 32px;color:var(--ink-3);font-size:.82rem}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6l8-3z"/><path d="M9 12l2 2 4-4"/></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+  <symbol id="i-undo" viewBox="0 0 24 24"><path d="M9 14L4 9l5-5"/><path d="M4 9h11a5 5 0 010 10h-3"/></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0116 0"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6a2 2 0 00-2 2v14a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M14 3v6h6"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></symbol>
+  <symbol id="i-up" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5"/><path d="M4 20h16"/></symbol>
+  <symbol id="i-send" viewBox="0 0 24 24"><path d="M4 12l16-8-6 16-3-7z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v4M12 18v4M2 12h4M18 12h4"/></symbol>
+  <symbol id="i-ban" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M6 6l12 12"/></symbol>
+  <symbol id="i-reset" viewBox="0 0 24 24"><path d="M3 12a9 9 0 109-9 9 9 0 00-6.4 2.6L3 8"/><path d="M3 3v5h5"/></symbol>
+</svg>
+
+<div class="top"><div class="top-in">
+  <div class="brand"><b>Hồ sơ Đối chiếu</b><span class="mono">T4 · khiếu nại "không đúng mô tả" · dữ liệu dựng, không backend</span></div>
+  <div class="seg" role="tablist" aria-label="Màn hình">
+    <button role="tab" id="tab-1" aria-selected="true" aria-controls="s1" data-go="s1">Màn 1 · Người mua</button>
+    <button role="tab" id="tab-2" aria-selected="false" aria-controls="s2" data-go="s2">Màn 2 · Người bán &amp; sàn</button>
+  </div>
+  <button class="tool-btn" id="annBtn" aria-pressed="false"><svg class="i" aria-hidden="true"><use href="#i-pin"/></svg>Chú thích số</button>
+  <button class="tool-btn" id="resetBtn"><svg class="i" aria-hidden="true"><use href="#i-reset"/></svg>Làm lại</button>
+</div></div>
+
+<div class="scen" role="group" aria-label="Chọn ca demo">
+  <span class="mono">CA DEMO</span>
+  <button class="chip" data-scen="k1a" aria-pressed="true">K1 · mô tả bị sửa (có bản lưu)</button>
+  <button class="chip" data-scen="k1b" aria-pressed="false">K1 · không có bản lưu</button>
+  <button class="chip" data-scen="k9" aria-pressed="false">K9 · doạ bóc phốt</button>
+  <button class="chip" data-scen="free" aria-pressed="false">Ca lạ (tự gõ)</button>
+</div>
+
+<main id="app">
+  <!-- ===================== SCREEN 1 ===================== -->
+  <section class="screen on" id="s1" role="tabpanel" aria-labelledby="tab-1">
+    <div class="screen-h"><h1>Người mua báo hàng không đúng mô tả</h1><p id="s1-sub">Bấm "Gửi" để bắt đầu ca.</p></div>
+
+    <div class="phone">
+      <div class="ph-top">
+        <div class="av" aria-hidden="true">S</div>
+        <div class="who"><b>Trò chuyện với Shopee</b><span class="ai-tag" data-ann="1">Trợ lý AI</span></div>
+      </div>
+      <div class="order-strip" id="orderStrip">
+        <div class="thumb" aria-hidden="true"></div>
+        <div class="meta"><b id="os-name"></b><span class="mono" id="os-meta"></span></div>
+      </div>
+      <div class="log" id="log" role="log" aria-live="polite" aria-label="Hội thoại"></div>
+      <form class="compose" id="compose">
+        <label><span class="sr">Tin nhắn</span><input id="input" autocomplete="off" placeholder="Nhập tin nhắn…"></label>
+        <button class="btn primary" type="submit"><svg class="i" aria-hidden="true"><use href="#i-send"/></svg>Gửi</button>
+      </form>
+    </div>
+
+    <div>
+      <article class="file">
+        <header><h2>Hồ sơ</h2><span class="mono" id="caseId"></span></header>
+        <div class="body">
+          <dl class="kv" id="caseKv"></dl>
+        </div>
+      </article>
+
+      <article class="file" data-ann="7">
+        <header><h2>Sổ quyền hạn của AI</h2><span class="mono">theo spec §4</span></header>
+        <div class="body" style="padding:6px 8px 10px">
+          <table class="ledger">
+            <thead><tr><th scope="col">Việc</th><th scope="col">Mức</th><th scope="col">Trạng thái</th></tr></thead>
+            <tbody id="ledger"></tbody>
+          </table>
+        </div>
+      </article>
+
+      <article class="file">
+        <header><h2>Ai được báo</h2><span class="mono">dòng thời gian</span></header>
+        <div class="body"><ul class="timeline" id="timeline"></ul></div>
+      </article>
+    </div>
+
+    <aside class="legend file" aria-label="Chú thích số"><header><h2>Chú thích số</h2><span class="mono">dùng cho ảnh trong prototype/</span></header><div class="body"><ol id="legend1"></ol></div></aside>
+  </section>
+
+  <!-- ===================== SCREEN 2 ===================== -->
+  <section class="screen" id="s2" role="tabpanel" aria-labelledby="tab-2">
+    <div class="screen-h"><h1>Bàn duyệt: người bán và trưởng nhóm sàn</h1><p>Việc "cần người duyệt" chỉ chạy khi có người bấm xác nhận.</p></div>
+
+    <div class="desk">
+      <article class="file" id="sellerCard">
+        <header><h2>Kênh người bán</h2><span class="mono" id="sellerState"></span></header>
+        <div class="body" id="sellerBody"></div>
+      </article>
+    </div>
+
+    <div class="desk">
+      <article class="file" id="leadCard">
+        <header><h2>Trưởng nhóm khiếu nại của sàn</h2><span class="mono" id="leadState"></span></header>
+        <div class="body" id="leadBody"></div>
+      </article>
+      <div class="forbidden" data-ann="7">
+        <svg class="i" aria-hidden="true"><use href="#i-ban"/></svg>
+        <div><b>Phạt / khoá shop không có nút ở đây.</b> <code class="mono">phat_shop</code> ở mức <b>Cấm</b> trong luồng khiếu nại: nghi hàng giả thì chuyển bộ phận Pháp chế, ngoài luồng chat.</div>
+      </div>
+    </div>
+
+    <aside class="legend file" aria-label="Chú thích số màn 2"><header><h2>Chú thích số</h2><span class="mono">màn 2</span></header><div class="body"><ol id="legend2"></ol></div></aside>
+  </section>
+</main>
+
+<footer>Prototype học tập LAB5 · dữ liệu dựng, không phải đơn hàng hay người thật · không gọi AI thật: câu trả lời được soạn sẵn theo spec §3–§4.</footer>
+
+<div class="scrim" id="scrim" role="presentation">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mTitle" aria-describedby="mBody">
+    <h3 id="mTitle"></h3>
+    <div id="mBody"></div>
+    <div class="acts"><button class="btn" id="mCancel">Huỷ</button><button class="btn primary" id="mOk">Xác nhận</button></div>
+  </div>
+</div>
+
+<script>
+/* ============================================================
+   Data (dựng) — one order, one product, two description versions
+   ============================================================ */
+const ORDER = {
+  id: 'DH2611-0457', item: 'Áo len cổ lọ · size M', price: 389000,
+  ordered: '04/11 20:14', delivered: '05/11', today: '06/11', daysLeft: 14,
+  descThen: '100% len lông cừu', descNow: '100% sợi tổng hợp (polyester)', editedAt: '06/11 09:32'
+};
+const money = n => n.toLocaleString('vi-VN') + 'đ';
+
+/* Autonomy levels exactly as spec §4 (soan_hoan_tien split into 2 steps) */
+const TOOLS = [
+  { k:'yeu_cau_bang_chung',   lv:'auto',   why:'sai thì chỉ là 1 tin nhắn, hoàn tác được' },
+  { k:'chuyen_truong_nhom',   lv:'auto',   why:'không đụng tiền, chuyển trả lại được' },
+  { k:'soan_ho_so_hoan_tien', lv:'auto',   why:'chỉ gom hồ sơ, tiền vẫn giữ ở sàn' },
+  { k:'duyet_giai_ngan',      lv:'review', why:'tiền về người mua thì khó lấy lại' },
+  { k:'tu_choi_khieu_nai',    lv:'review', why:'trưởng nhóm sàn duyệt 100%' },
+  { k:'phat_shop',            lv:'forbid', why:'ngoài thẩm quyền CSKH → Pháp chế' }
+];
+const LV = { auto:['Tự làm','auto'], review:['Cần duyệt','review'], forbid:['Cấm','forbid'] };
+
+const SCEN = {
+  k1a: { label:'K1 · mô tả bị sửa, đơn CÓ bản lưu lúc đặt', snapshot:true,
+    opener:'Lúc mình đặt thì shop ghi áo len lông cừu 100%, nhận về nhãn lại ghi polyester. Vào trang sản phẩm thì shop đã sửa thành sợi tổng hợp rồi. Sàn xử lý cho mình trả hàng.' },
+  k1b: { label:'K1 · mô tả bị sửa, đơn KHÔNG có bản lưu', snapshot:false,
+    opener:'Lúc mình đặt thì shop ghi áo len lông cừu 100%, giờ trang sản phẩm ghi sợi tổng hợp. Mình muốn trả hàng.' },
+  k9:  { label:'K9 · doạ bóc phốt, ép hoàn trong 15 phút', snapshot:true,
+    opener:'Hàng nhận được không giống hình gì cả, shop lừa đảo. 15 phút nữa không hoàn tiền thì tôi đăng bài bóc phốt lên Facebook và TikTok.' },
+  free:{ label:'Ca lạ: gõ bất kỳ tin nhắn nào', snapshot:true, opener:'' }
+};
+
+/* Numbered annotations: what · HAX/PAIR · autonomy level */
+const LEGEND1 = [
+  ['Nhãn "Trợ lý AI" trên đầu chat và trên mỗi câu AI nói', 'G1 · cho người dùng biết đang nói với AI (Luật AI 134/2025, Điều 11)'],
+  ['Dòng kiểm "Đơn có bản lưu mô tả lúc đặt?" trước khi AI kết luận', 'G10 · thu hẹp phạm vi khi chưa chắc · thiết kế cứu lỗi K1: chỉ đọc mô tả theo mã đơn'],
+  ['Thẻ đối chiếu: mô tả lúc đặt cạnh mô tả hiện tại, tô vàng chỗ khác', 'G11 · giải thích vì sao · PAIR Explainability: căn cứ để người dùng tự kiểm'],
+  ['Chip độ chắc: chắc về MÔ TẢ, chưa xác minh hàng thực tế', 'G2 · nói rõ AI biết tới đâu'],
+  ['Sự kiện "đã gửi yêu cầu bằng chứng" + nút Hoàn tác', 'Mức Tự làm (có hoàn tác) · G9 sửa dễ'],
+  ['Nút "Gặp nhân viên sàn" luôn có, không đưa cho shop', 'PAIR Graceful failure · chuyen_truong_nhom (Tự làm)'],
+  ['Sổ quyền hạn: phat_shop ở mức Cấm, không có nút ở bất kỳ màn nào', 'Mức Cấm']
+];
+const LEGEND2 = [
+  ['Hạn phản hồi 24h của người bán và luật khi quá hạn', 'Cần duyệt · có quá hạn rõ ràng (spec §4)'],
+  ['Nút "Đồng ý hoàn tiền" mở hộp xác nhận ghi rõ số tiền và việc khó đảo', 'Cần duyệt · duyet_giai_ngan'],
+  ['Trưởng nhóm sàn duyệt khi người bán phản đối; từ chối khiếu nại cũng phải xác nhận', 'Cần duyệt · tu_choi_khieu_nai (100% người duyệt)'],
+  ['Lời doạ được ẩn khỏi bản người bán nhìn thấy', 'Trung lập: lời doạ không phải căn cứ']
+];
+
+/* ============================================================
+   State
+   ============================================================ */
+let S;
+function fresh(scen){
+  return { scen, step:0, tools:Object.fromEntries(TOOLS.map(t=>[t.k,'—'])), live:null,
+           notify:[], evidence:false, seller:null, lead:null, sellerNote:'' };
+}
+const $ = s => document.querySelector(s);
+const log = $('#log');
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const wait = ms => new Promise(r => setTimeout(r, reduce ? 0 : ms));
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const icon = (id) => `<svg class="i" aria-hidden="true"><use href="#i-${id}"/></svg>`;
+
+/* ---------- chat primitives ---------- */
+function add(html, cls){ const d=document.createElement('div'); d.className=cls; d.innerHTML=html; log.appendChild(d); log.scrollTop=log.scrollHeight; return d; }
+const me = t => add(esc(t), 'msg me');
+function ai(html, ann){ return add(`<div class="by"><span class="ai-tag"${ann?` data-ann="${ann}"`:''}>Trợ lý AI</span></div>${html}`, 'msg ai'); }
+async function typing(label){ const d=add(`<span class="dots" aria-hidden="true"><i></i><i></i><i></i></span>${esc(label)}`,'typing'); await wait(750); d.remove(); }
+function event(text, lv, opts={}){
+  const d = add(`${icon(lv==='auto'?'shield':lv==='review'?'clock':'lock')}<span class="grow">${text}</span><span class="pill ${lv}">${LV[lv][0]}</span>`, 'event ' + (lv==='auto'?'':lv));
+  if (opts.ann) d.dataset.ann = opts.ann;
+  if (opts.undo){
+    const b=document.createElement('button'); b.className='linkbtn'; b.type='button'; b.innerHTML=icon('undo')+' Hoàn tác';
+    b.onclick=()=>{ d.classList.add('undone'); b.remove(); setTool(opts.undo,'đã hoàn tác'); ai('<p>Đã huỷ yêu cầu gửi ảnh. Bạn vẫn có thể gửi sau, hạn trả hàng còn <b>'+ORDER.daysLeft+' ngày</b>.</p>'); };
+    d.appendChild(b);
+  }
+  return d;
+}
+function setTool(k, state){ S.tools[k]=state; S.live=k; renderLedger(); }
+function notify(t, who, what){ S.notify.push({t,who,what}); renderTimeline(); }
+
+/* ---------- side panels ---------- */
+function renderCase(){
+  const sc=SCEN[S.scen];
+  $('#os-name').textContent = ORDER.item;
+  $('#os-meta').textContent = `#${ORDER.id} · ${money(ORDER.price)} · giao ${ORDER.delivered}`;
+  $('#caseId').textContent = '#'+ORDER.id;
+  $('#s1-sub').textContent = sc.label;
+  $('#caseKv').innerHTML = `
+    <dt>Đặt lúc</dt><dd class="mono">${ORDER.ordered}</dd>
+    <dt>Bản lưu mô tả</dt><dd>${sc.snapshot ? `<span class="pill auto">CÓ · bất biến</span>` : `<span class="pill forbid">KHÔNG CÓ</span>`}</dd>
+    <dt>Hạn trả hàng</dt><dd>còn <b>${ORDER.daysLeft} ngày</b> <span class="mono">(dữ liệu dựng)</span></dd>
+    <dt>Bằng chứng</dt><dd>${S.evidence ? 'Ảnh nhãn mác: <b>đã nhận</b>' : '<span class="empty">chưa có</span>'}</dd>`;
+}
+function renderLedger(){
+  $('#ledger').innerHTML = TOOLS.map(t=>`<tr class="${S.live===t.k?'live':''}">
+    <td><code>${t.k}</code><span class="why hide-s">${t.why}</span></td>
+    <td><span class="pill ${t.lv}">${LV[t.lv][0]}</span></td>
+    <td class="state">${t.lv==='forbid' ? 'không có nút' : esc(S.tools[t.k])}</td></tr>`).join('');
+}
+function renderTimeline(){
+  $('#timeline').innerHTML = S.notify.length
+    ? S.notify.map(n=>`<li><span class="t">${n.t}</span><span><b>${n.who}</b> — ${n.what}</span></li>`).join('')
+    : '<li><span class="t">—</span><span class="pending">Chưa ai được báo.</span></li>';
+}
+
+/* ---------- screen 2 ---------- */
+function renderDesk(){
+  const sc=SCEN[S.scen], opened = S.step>=2;
+  const sb=$('#sellerBody'), lb=$('#leadBody');
+  $('#sellerState').textContent = !opened ? 'chưa có khiếu nại' : S.seller ? (S.seller==='agree'?'đã đồng ý':'đã phản đối') : 'chờ phản hồi';
+  if (!opened){ sb.innerHTML = '<p class="empty">Chưa có hồ sơ. Chạy ca ở Màn 1 tới bước người mua gửi bằng chứng.</p>'; }
+  else {
+    sb.innerHTML = `
+      <p class="party">${icon('user')} Hồ sơ #${ORDER.id} · ${ORDER.item} · ${money(ORDER.price)}</p>
+      <div class="deadline" data-ann="8">${icon('clock')}<span>Hạn phản hồi: <b>24:00:00</b>. Quá hạn mà hồ sơ đã đủ bằng chứng → sàn hoàn tiền cho người mua (spec §4).</span></div>
+      ${sc.snapshot ? cmpHTML() : '<p class="note"><b>Không có bản lưu mô tả lúc đặt.</b> Sàn chưa kết luận; người mua được xin ảnh trang sản phẩm lúc mua.</p>'}
+      <p class="note" data-ann="11">Tin người mua (đã ẩn lời doạ): <i>"${S.scen==='k9' ? 'Hàng nhận được không giống hình. [nội dung đe doạ đã ẩn]' : 'Mô tả lúc đặt ghi len lông cừu, nhãn thực tế ghi polyester.'}"</i></p>
+      <p class="note">Bằng chứng: ${S.evidence?'ảnh nhãn mác (đã nhận)':'chưa có'}.</p>
+      ${S.seller ? `<p class="note"><b>Bạn đã ${S.seller==='agree'?'đồng ý hoàn tiền':'phản đối'}.</b> ${S.sellerNote?esc(S.sellerNote):''}</p>` : `
+      <label for="sellerNote" class="note" style="display:block;margin-top:12px">Giải trình (nếu phản đối)</label>
+      <textarea id="sellerNote" placeholder="Ví dụ: video đóng hàng ở kho, mã lô…"></textarea>
+      <div class="acts">
+        <button class="btn primary" id="sellerAgree" data-ann="9">Đồng ý hoàn tiền</button>
+        <button class="btn warn" id="sellerObject">Phản đối, gửi giải trình</button>
+      </div>`}`;
+    if (!S.seller){
+      $('#sellerAgree').onclick = ()=> confirmBox('Đồng ý hoàn '+money(ORDER.price)+'?',
+        `<p>Tiền sẽ chuyển về người mua. Việc này <b>khó đảo lại</b>. Hàng trả về kho theo luồng trả hàng.</p><p class="note">Bước này chính là <code class="mono">duyet_giai_ngan</code> (cần người duyệt).</p>`,
+        ()=>{ S.seller='agree'; setTool('duyet_giai_ngan','người bán duyệt'); notify('ngay', 'Người mua', 'người bán đã đồng ý hoàn tiền'); finishBuyer('agree'); render(); });
+      $('#sellerObject').onclick = ()=>{ S.sellerNote=$('#sellerNote').value.trim(); S.seller='object'; setTool('chuyen_truong_nhom','đã chuyển (tranh chấp)'); notify('+15\'','Trưởng nhóm sàn','người bán phản đối, cần quyết'); render(); };
+    }
+  }
+  $('#leadState').textContent = S.lead ? 'đã quyết' : (S.seller==='object' || S.scen==='k9' && opened) ? 'cần quyết' : 'không có việc';
+  const needLead = S.seller==='object' || (S.scen==='k9' && opened) || (S.scen==='k1b' && opened);
+  if (!needLead){ lb.innerHTML = '<p class="empty">Không có ca chờ. Trưởng nhóm chỉ nhận ca khi người bán phản đối, khi không có bản lưu, hoặc ca có cờ khủng hoảng.</p>'; return; }
+  lb.innerHTML = `
+    <p class="party">${icon('file')} Ca #${ORDER.id} ${S.scen==='k9'?'· <span class="pill review">cờ khủng hoảng</span>':''}</p>
+    <dl class="kv"><dt>Lý do lên bàn</dt><dd>${S.seller==='object'?'Người bán phản đối':S.scen==='k1b'?'Không có bản lưu mô tả lúc đặt':'Có lời đe doạ, người mua đòi hoàn trong 15 phút'}</dd>
+    <dt>Bằng chứng</dt><dd>${S.evidence?'ảnh nhãn mác':'chưa có'}${S.scen==='k9'?' · <b>chưa có video mở hộp</b>':''}</dd>
+    ${S.sellerNote?`<dt>Giải trình shop</dt><dd>${esc(S.sellerNote)}</dd>`:''}</dl>
+    ${S.lead ? `<p class="note"><b>Đã quyết: ${S.lead==='refund'?'duyệt hoàn tiền':'từ chối khiếu nại'}.</b></p>` : `
+    <div class="acts" data-ann="10">
+      <button class="btn primary" id="leadRefund" ${S.scen==='k9'&&!S.evidence?'disabled':''}>Duyệt hoàn tiền</button>
+      <button class="btn danger" id="leadReject">Từ chối khiếu nại</button>
+    </div>
+    ${S.scen==='k9'?'<p class="note">'+icon('lock')+' "Duyệt hoàn tiền" khoá tới khi có video mở hộp (§3.5 K9).</p>':''}`}`;
+  if (!S.lead){
+    const r=$('#leadRefund'), j=$('#leadReject');
+    if (r) r.onclick=()=>confirmBox('Duyệt hoàn '+money(ORDER.price)+'?','<p>Tiền về người mua, <b>khó đảo lại</b>. Quyết định được ghi tên người duyệt.</p>',()=>{ S.lead='refund'; setTool('duyet_giai_ngan','trưởng nhóm duyệt'); finishBuyer('agree'); render(); });
+    j.onclick=()=>confirmBox('Từ chối khiếu nại?','<p>Đóng khiếu nại, tiền về người bán. <b>Khó đảo lại</b>: người mua mất tiền nếu sàn quyết sai.</p><p class="note"><code class="mono">tu_choi_khieu_nai</code> chỉ chạy khi trưởng nhóm bấm.</p>',()=>{ S.lead='reject'; setTool('tu_choi_khieu_nai','trưởng nhóm duyệt'); finishBuyer('reject'); render(); });
+  }
+}
+function cmpHTML(ann){
+  return `<div class="cmp"${ann?` data-ann="${ann}"`:''}>
+    <div><span class="h">Lúc đặt · ${ORDER.ordered}</span>Chất liệu: <mark>${ORDER.descThen}</mark></div>
+    <div><span class="h">Hiện tại <span class="edited">· sửa ${ORDER.editedAt}</span></span>Chất liệu: <mark>${ORDER.descNow}</mark></div>
+  </div>`;
+}
+
+/* ---------- modal ---------- */
+let lastFocus=null;
+function confirmBox(title, body, ok){
+  lastFocus=document.activeElement;
+  $('#mTitle').textContent=title; $('#mBody').innerHTML=body;
+  $('#scrim').classList.add('on'); $('#mCancel').focus();
+  $('#mOk').onclick=()=>{ closeBox(); ok(); };
+}
+function closeBox(){ $('#scrim').classList.remove('on'); if (lastFocus) lastFocus.focus(); }
+$('#mCancel').onclick=closeBox;
+$('#scrim').addEventListener('click',e=>{ if(e.target.id==='scrim') closeBox(); });
+document.addEventListener('keydown',e=>{
+  if(!$('#scrim').classList.contains('on')) return;
+  if(e.key==='Escape') closeBox();
+  if(e.key==='Tab'){ const f=[$('#mCancel'),$('#mOk')]; const i=f.indexOf(document.activeElement); e.preventDefault(); f[(i+(e.shiftKey?-1:1)+2)%2].focus(); }
+});
+
+/* ============================================================
+   Flows
+   ============================================================ */
+async function runK1(text){
+  const sc=SCEN[S.scen];
+  me(text); S.step=1;
+  await typing('Đang mở bản lưu của đơn #'+ORDER.id+'…');
+  const check = `<div class="check" data-ann="2">${icon('file')}<span><b>KIỂM:</b> đơn #${ORDER.id} có bản lưu mô tả lúc đặt? → <b>${sc.snapshot?'CÓ':'KHÔNG'}</b>. AI chỉ đọc mô tả theo mã đơn, không đọc trang sản phẩm hiện tại.</span></div>`;
+  if (sc.snapshot){
+    ai(`${check}
+      <p>Mình đã đối chiếu đơn của bạn. Lúc bạn đặt (${ORDER.ordered}), mô tả ghi <b>${ORDER.descThen}</b>. Mô tả hiện tại đã được sửa ngày ${ORDER.editedAt.split(' ')[0]} thành <b>${ORDER.descNow}</b>.</p>
+      ${cmpHTML(3)}
+      <div class="src">${icon('shield')} Căn cứ: bản lưu đơn #${ORDER.id}, không phải trang sản phẩm hiện tại.</div>
+      <div class="conf" data-ann="4"><span class="pill auto">Chắc: mô tả đã bị sửa sau khi bạn đặt</span><span class="pill review">Chưa xác minh: hàng bạn nhận</span></div>
+      <p>Bạn gửi giúp mình <b>1 ảnh chụp rõ nhãn thành phần</b> trên áo nhé. Hạn yêu cầu trả hàng còn <b>${ORDER.daysLeft} ngày</b>. Người bán sẽ được báo và có 24 giờ để phản hồi trước khi sàn quyết.</p>
+      <div class="acts">
+        <button class="btn primary" id="upBtn">${icon('up')} Gửi ảnh nhãn mác</button>
+        <button class="btn" id="humanBtn" data-ann="6">${icon('user')} Gặp nhân viên sàn</button>
+      </div>`, 1);
+    setTool('yeu_cau_bang_chung','đã gửi mẫu xin ảnh');
+    event('Đã gửi mẫu xin ảnh nhãn mác cho bạn (<code class="mono">yeu_cau_bang_chung</code>).','auto',{undo:'yeu_cau_bang_chung', ann:5});
+  } else {
+    ai(`${check}
+      <p>Đơn này <b>chưa có bản lưu mô tả lúc đặt</b>, nên mình <b>chưa thể kết luận</b> mô tả đã bị sửa hay chưa. Mình không so với trang sản phẩm hiện tại vì trang đó có thể đã đổi.</p>
+      <div class="conf" data-ann="4"><span class="pill forbid">Chưa đủ căn cứ</span><span class="pill ink">Không tự quyết hoàn hay từ chối</span></div>
+      <p>Bạn gửi giúp mình <b>ảnh chụp trang sản phẩm lúc mua</b> (nếu có) và <b>ảnh nhãn thành phần</b>. Mình đã chuyển hồ sơ cho nhân viên sàn đối chiếu. Hạn trả hàng còn <b>${ORDER.daysLeft} ngày</b>, bạn không bị mất hạn trong lúc chờ.</p>
+      <div class="acts">
+        <button class="btn primary" id="upBtn">${icon('up')} Gửi ảnh</button>
+        <button class="btn" id="humanBtn" data-ann="6">${icon('user')} Gặp nhân viên sàn</button>
+      </div>`, 1);
+    setTool('yeu_cau_bang_chung','đã gửi mẫu xin ảnh');
+    event('Đã gửi mẫu xin ảnh (<code class="mono">yeu_cau_bang_chung</code>).','auto',{undo:'yeu_cau_bang_chung', ann:5});
+    setTool('chuyen_truong_nhom','đã chuyển (không có bản lưu)');
+    event('Đã chuyển hồ sơ cho trưởng nhóm của sàn (<code class="mono">chuyen_truong_nhom</code>).','auto');
+    notify("+1'", 'Trưởng nhóm sàn', 'ca không có bản lưu mô tả');
+  }
+  notify("+5'", 'Người bán', 'có khiếu nại mới, hạn phản hồi 24h');
+  wireBuyerButtons(); render();
+}
+async function runK9(text){
+  me(text); S.step=1;
+  await typing('Đang kiểm hồ sơ…');
+  ai(`<p>Mình hiểu bạn đang rất bực về món hàng này. Để công bằng cho cả hai bên, sàn <b>chưa thể hoàn tiền ngay trong 15 phút</b>: mọi yêu cầu hoàn tiền đều cần đối chiếu bằng chứng, và người bán có 24 giờ để phản hồi.</p>
+    <div class="src" data-ann="3">${icon('shield')} Căn cứ: quy trình đối soát trả hàng của sàn. Lời đe doạ không thay cho bằng chứng.</div>
+    <div class="conf" data-ann="4"><span class="pill review">Chưa đủ căn cứ để hoàn ngay</span></div>
+    <p>Bạn gửi giúp mình <b>video mở hộp</b> và <b>ảnh tem vận đơn</b> để mở yêu cầu trả hàng. Hạn trả hàng còn <b>${ORDER.daysLeft} ngày</b>.</p>
+    <div class="acts">
+      <button class="btn primary" id="upBtn">${icon('up')} Gửi video mở hộp</button>
+      <button class="btn" id="humanBtn" data-ann="6">${icon('user')} Gặp nhân viên sàn</button>
+    </div>`, 1);
+  setTool('yeu_cau_bang_chung','đã gửi mẫu xin video');
+  event('Đã gửi mẫu xin video mở hộp + tem vận đơn (<code class="mono">yeu_cau_bang_chung</code>).','auto',{undo:'yeu_cau_bang_chung',ann:5});
+  setTool('chuyen_truong_nhom','đã chuyển (cờ khủng hoảng)');
+  event('Đã báo trưởng nhóm sàn: ca có cờ khủng hoảng (<code class="mono">chuyen_truong_nhom</code>).','auto');
+  event('<code class="mono">duyet_giai_ngan</code> đang khoá: chưa có video mở hộp, người bán chưa phản hồi.','review');
+  S.tools['duyet_giai_ngan']='khoá (thiếu video)';
+  notify("+1'", 'Người bán', 'khiếu nại mới (lời doạ đã ẩn), hạn 24h');
+  notify("+5'", 'Trưởng nhóm sàn', 'cờ khủng hoảng, theo dõi');
+  S.step=2; wireBuyerButtons(); render();
+}
+function wireBuyerButtons(){
+  const up=$('#upBtn'), hu=$('#humanBtn');
+  if (up) up.onclick = async ()=>{
+    up.disabled=true;
+    const d=add(`<div class="upload"><div class="label-photo" aria-label="Ảnh nhãn mác (dựng)">${S.scen==='k9'?'VIDEO<br>mở hộp<br>0:42':'NHÃN<br>100%<br>POLYESTER'}</div><span>${S.scen==='k9'?'video_mo_hop.mp4':'anh_nhan_mac.jpg'}</span></div>`,'msg me');
+    S.evidence=true; S.step=2;
+    await typing('Đang gom hồ sơ…');
+    setTool('soan_ho_so_hoan_tien','đã soạn, tiền giữ ở sàn');
+    event('Đã soạn hồ sơ hoàn tiền '+money(ORDER.price)+', tiền vẫn giữ ở sàn (<code class="mono">soan_ho_so_hoan_tien</code>).','auto');
+    S.tools['duyet_giai_ngan']='chờ người bán duyệt';
+    event('Hoàn tiền cần <b>người bán</b> (hoặc trưởng nhóm sàn) bấm xác nhận.','review');
+    ai(`<p>Mình đã nhận ${S.scen==='k9'?'video':'ảnh'} và mở yêu cầu trả hàng. Bạn <b>không cần làm gì thêm</b>. Người bán có tới <b>24 giờ</b> để phản hồi; nếu quá hạn, sàn sẽ xử lý theo hồ sơ.</p>
+      <p class="note">Xem bước tiếp ở <b>Màn 2 · Người bán &amp; sàn</b>.</p>`);
+    render();
+  };
+  if (hu) hu.onclick = ()=>{
+    hu.disabled=true;
+    if (S.tools['chuyen_truong_nhom']==='—') setTool('chuyen_truong_nhom','người mua yêu cầu');
+    notify("+0'", 'Nhân viên sàn', 'người mua bấm "Gặp nhân viên sàn"');
+    ai('<p>Mình đã chuyển bạn sang <b>nhân viên của sàn</b> (không phải nhân viên shop), kèm toàn bộ hồ sơ để bạn không phải kể lại. Thời gian phản hồi phụ thuộc giờ trực.</p>');
+    render();
+  };
+}
+function finishBuyer(result){
+  ai(result==='agree'
+    ? `<p>Yêu cầu trả hàng của bạn đã được <b>duyệt hoàn ${money(ORDER.price)}</b>. Mình sẽ gửi hướng dẫn gửi trả áo.</p>`
+    : `<p>Sàn đã xem hồ sơ và <b>chưa chấp nhận</b> yêu cầu. Lý do được ghi trong hồ sơ. Bạn có thể khiếu nại lại với nhân viên sàn trong hạn.</p>`);
+}
+
+/* Unknown case router: the prototype's answer to "ca lạ" */
+function markScen(scen){ S.scen=scen; document.querySelectorAll('[data-scen]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.scen===scen)); }
+async function runFree(text){
+  const t=text.toLowerCase();
+  /* known patterns reuse the designed flows */
+  if (/(phốt|phot|bóc|boc|tiktok|facebook)/.test(t)){ markScen('k9'); return runK9(text); }
+  if (/(mô tả|mo ta|không đúng|khong dung)/.test(t) && t.length>25){ markScen('k1a'); return runK1(text); }
+  me(text); S.step=Math.max(S.step,1);
+  await typing('Đang đọc yêu cầu…');
+  if (/(sđt|sdt|số điện thoại|so dien thoai|địa chỉ|dia chi|zalo)/.test(t)){
+    ai('<p>Mình không thể đưa số điện thoại hay địa chỉ giữa người mua và người bán, để bảo vệ thông tin của cả hai bên. Bạn cứ nhắn ở đây, mình chuyển nội dung cho shop và ghi vào hồ sơ.</p><div class="conf"><span class="pill forbid">Ngoài phạm vi: không có việc này</span></div>');
+  } else if (/(hàng giả|hang gia|fake|khoá shop|khóa shop|khoa shop|phạt|phat)/.test(t)){
+    ai('<p>Nghi hàng giả hay xử phạt shop <b>không thuộc luồng khiếu nại này</b>, nên mình không hứa phạt shop. Mình đã chuyển hồ sơ sang bộ phận chuyên trách; trong lúc đó yêu cầu trả hàng của bạn vẫn được xử lý bình thường.</p><div class="conf"><span class="pill forbid">phat_shop: Cấm trong luồng này</span></div>');
+    setTool('chuyen_truong_nhom','đã chuyển (nghi hàng giả)');
+    event('Đã chuyển sang bộ phận chuyên trách (<code class="mono">chuyen_truong_nhom</code>).','auto');
+    notify("+1'",'Pháp chế','nghi hàng giả, ngoài luồng CSKH');
+  } else {
+    ai(`<p>Mình chưa rõ bạn đang nói về đơn nào và sai ở điểm gì. Bạn chọn giúp mình đơn hàng nhé:</p>
+      <div class="acts"><button class="btn" id="pickOrder">#${ORDER.id} · ${ORDER.item}</button><button class="btn" id="humanBtn" data-ann="6">${icon('user')} Gặp nhân viên sàn</button></div>`);
+    $('#pickOrder').onclick=()=>{ me('#'+ORDER.id); ai('<p>Cảm ơn bạn. Món này sai ở điểm nào so với mô tả lúc bạn đặt? (màu, size, chất liệu, dung tích…)</p>'); };
+    wireBuyerButtons();
+  }
+  render();
+}
+
+/* ============================================================
+   Render + wiring
+   ============================================================ */
+function render(){ renderCase(); renderLedger(); renderTimeline(); renderDesk(); }
+function start(scen){
+  S=fresh(scen); log.innerHTML='';
+  document.querySelectorAll('[data-scen]').forEach(b=>b.setAttribute('aria-pressed', b.dataset.scen===scen));
+  $('#input').value = SCEN[scen].opener;
+  $('#input').placeholder = scen==='free' ? 'Gõ một ca lạ, ví dụ: "cho mình sđt shop"' : 'Nhập tin nhắn…';
+  add(`<span class="mono" style="color:var(--ink-3)">Ca: ${esc(SCEN[scen].label)}</span>`,'typing');
+  render();
+}
+$('#compose').addEventListener('submit', e=>{
+  e.preventDefault(); const t=$('#input').value.trim(); if(!t) return; $('#input').value='';
+  if (S.step>0) return runFree(t);
+  if (S.scen==='k1a'||S.scen==='k1b') runK1(t); else if (S.scen==='k9') runK9(t); else runFree(t);
+});
+document.querySelectorAll('[data-scen]').forEach(b=>b.onclick=()=>start(b.dataset.scen));
+document.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{
+  document.querySelectorAll('[data-go]').forEach(x=>x.setAttribute('aria-selected', x===b));
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('on', s.id===b.dataset.go));
+});
+$('#annBtn').onclick=()=>{ const on=document.body.classList.toggle('ann-on'); $('#annBtn').setAttribute('aria-pressed',on); };
+$('#resetBtn').onclick=()=>start(S.scen);
+$('#legend1').innerHTML = LEGEND1.map((l,i)=>`<li><span class="n">${i+1}</span><span>${l[0]}<span class="p">${l[1]}</span></span></li>`).join('');
+$('#legend2').innerHTML = LEGEND2.map((l,i)=>`<li><span class="n">${i+8}</span><span>${l[0]}<span class="p">${l[1]}</span></span></li>`).join('');
+start('k1a');
+</script>
+</body>
+</html>
